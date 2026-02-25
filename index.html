@@ -2,79 +2,71 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Hitster Duo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hitster Duo - Mobile Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #0a0a0f; --sur: #13131a; --s2: #1c1c28;
-            --p1: #ff3c5c; --p2: #00d4ff; --gold: #ffd060;
+            --p1: #ff3c5c; --p2: #00d4ff; --gold: #ffd060; --gray: #444;
             --txt: #f0f0f0; --mut: #888; --r: 16px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; min-height: 100dvh; }
+        body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; height: 100dvh; overflow: hidden; }
         
-        .screen { display: none; min-height: 100dvh; flex-direction: column; }
+        .screen { display: none; height: 100dvh; flex-direction: column; }
         .screen.active { display: flex; }
 
-        #ss { align-items: center; justify-content: center; gap: 22px; padding: 20px; }
-        .lm { font-family: 'Bebas Neue', cursive; font-size: 60px; letter-spacing: 4px; background: linear-gradient(135deg, var(--p1), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .setup { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 12px; }
-        .pi { background: var(--sur); border-radius: var(--r); padding: 12px; border: 1px solid #333; }
-        input { background: none; border: none; color: #fff; font-size: 16px; outline: none; width: 100%; }
+        /* Setup Screen */
+        #ss { align-items: center; justify-content: center; padding: 20px; }
+        .lm { font-family: 'Bebas Neue'; font-size: 64px; background: linear-gradient(135deg, var(--p1), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; letter-spacing: 2px;}
+        .setup-form { width: 100%; max-width: 340px; }
+        .pi { background: var(--sur); border-radius: var(--r); padding: 16px; border: 1px solid #333; margin-bottom: 12px; }
+        input { background: none; border: none; color: #fff; font-size: 18px; outline: none; width: 100%; }
 
-        .hdr { display: flex; justify-content: space-between; padding: 15px; background: var(--sur); align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
-        .gbody { padding: 15px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        /* Game Header */
+        .hdr { display: flex; justify-content: space-between; padding: 15px 20px; background: var(--sur); border-bottom: 1px solid #333; align-items: center; z-index: 10;}
+        .score-box { font-weight: bold; font-size: 18px; }
+        .turn-box { text-align: center; }
+        .turn-box small { color: var(--mut); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        .turn-box div { font-family: 'Bebas Neue'; font-size: 22px; color: #fff; }
+
+        /* Scrollable Timeline Area */
+        .gbody { flex: 1; overflow-y: auto; padding: 15px 15px 120px 15px; position: relative; }
         
-        /* SPOTIFY AREA */
-        .sp-box { 
-            position: relative; 
-            height: 80px; 
-            background: #000; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            border: 2px solid #222; 
-        }
-        .sp-box iframe { width: 100%; height: 80px; border: none; }
+        /* Timeline Items */
+        .instr { text-align: center; color: var(--mut); margin-bottom: 15px; font-size: 14px; }
+        .tins { padding: 18px; border: 2px dashed #444; border-radius: 12px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; font-size: 18px; cursor: pointer; margin: 10px 0; background: rgba(255,255,255,0.02); transition: 0.2s; }
+        .tins:active { background: rgba(255, 208, 96, 0.2); border-color: var(--gold); }
+        .tcard { background: var(--s2); padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--gold); margin: 5px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .tyear { font-family: 'Bebas Neue'; font-size: 26px; color: var(--gold); min-width: 60px; }
+
+        /* Bottom Action Bar */
+        .action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(19, 19, 26, 0.95); backdrop-filter: blur(10px); padding: 15px 20px; border-top: 1px solid #333; z-index: 50; padding-bottom: calc(15px + env(safe-area-inset-bottom)); }
         
-        /* HET MASKER: Bedekt nu de LINKER helft (albumhoes) en de BOVENKANT */
-        .sp-mask { 
-            position: absolute; 
-            inset: 0;
-            background: var(--sur); 
-            z-index: 10; 
-            display: flex; 
-            align-items: center; 
-            justify-content: flex-end; /* Tekst naar rechts waar de playknop zit */
-            padding-right: 20px;
-            clip-path: inset(0 60px 0 0); /* Verbergt alles BEHALVE de rechter 60px */
-            background: linear-gradient(90deg, var(--sur) 0%, var(--sur) 70%, transparent 100%);
-            pointer-events: none;
-        }
-        
-        /* Alternatieve simpele zwarte balk voor de linkerhelft */
-        .cover-blocker {
-            position: absolute;
-            top: 0; left: 0;
-            width: 80px; /* Blokkeert precies de albumhoes */
-            height: 80px;
-            background: #000;
-            z-index: 11;
-            pointer-events: none;
-        }
-
-        .sp-mask.hidden, .cover-blocker.hidden { display: none; }
-
-        .tins { padding: 14px; border: 2px dashed #444; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 8px 0; font-size: 16px; }
-        .tcard { background: var(--s2); padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; border-left: 4px solid var(--gold); margin: 4px 0; }
-        .tyear { font-family: 'Bebas Neue'; font-size: 24px; color: var(--gold); min-width: 60px; }
-        .tinfo { font-size: 14px; }
-        .tinfo strong { display: block; color: #fff; }
-
-        .btn { padding: 16px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 20px; cursor: pointer; text-transform: uppercase; width: 100%; }
+        /* Buttons */
+        .btn { padding: 16px; border: none; border-radius: 12px; font-family: 'Bebas Neue'; font-size: 22px; cursor: pointer; width: 100%; transition: 0.2s; letter-spacing: 1px; }
+        .btn:active { transform: scale(0.98); }
         .btn-p1 { background: var(--p1); color: #fff; }
+        .btn-gold { background: var(--gold); color: #000; }
+        .btn-gray { background: var(--gray); color: #fff; }
+        
+        .flex-btns { display: flex; gap: 10px; margin-top: 10px; }
 
-        .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: var(--p1); border-radius: 50%; animation: spin 1s linear infinite; }
+        /* Invisible Spotify */
+        #spotify-container { width: 1px; height: 1px; opacity: 0; position: absolute; pointer-events: none; }
+
+        /* Custom Modal for Results */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--sur); border-radius: var(--r); padding: 30px 20px; width: 100%; max-width: 340px; text-align: center; border: 1px solid #333; }
+        .modal-title { font-family: 'Bebas Neue'; font-size: 40px; margin-bottom: 10px; }
+        .modal-song { background: var(--s2); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .modal-song .y { color: var(--gold); font-family: 'Bebas Neue'; font-size: 32px; display: block; margin-bottom: 5px; }
+        .modal-song .t { font-weight: bold; font-size: 18px; color: #fff; display: block; }
+        .modal-song .a { color: var(--mut); font-size: 14px; }
+        .modal-desc { margin-bottom: 20px; font-size: 15px; line-height: 1.4; color: #ccc; }
+
+        .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: var(--p1); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
@@ -83,44 +75,70 @@
     <div id="ss" class="screen active">
         <div class="lm">HITSTER</div>
         <div id="load-status"><div class="spinner"></div></div>
-        <div class="setup" id="setup-form" style="display:none">
+        <div id="setup-form" class="setup-form" style="display:none;">
             <div class="pi"><input type="text" id="p1n" placeholder="Naam Speler 1"></div>
             <div class="pi"><input type="text" id="p2n" placeholder="Naam Speler 2"></div>
             <button class="btn btn-p1" onclick="startGame()">Start Spel</button>
         </div>
     </div>
 
-    <div id="sp" class="screen" style="justify-content:center; align-items:center; text-align:center; padding: 20px;">
-        <h2 id="pass-title" class="lm" style="font-size:32px;">WISSEL</h2>
-        <p id="pass-sub" style="margin:20px 0; font-size: 18px;"></p>
-        <button class="btn btn-p1" onclick="showScreen('sg')">Start beurt</button>
-    </div>
-
     <div id="sg" class="screen">
         <div class="hdr">
-            <div id="hp1" style="color:var(--p1); font-weight:bold"></div>
-            <div style="text-align:center"><small style="color:var(--mut)">BEURT VAN</small><div id="hturn" style="font-family:'Bebas Neue'; font-size:18px;"></div></div>
-            <div id="hp2" style="color:var(--p2); font-weight:bold"></div>
+            <div id="hp1" class="score-box" style="color:var(--p1)"></div>
+            <div class="turn-box"><small>Beurt van</small><div id="hturn"></div></div>
+            <div id="hp2" class="score-box" style="color:var(--p2)"></div>
         </div>
         
-        <div class="gbody">
-            <div class="sp-box">
-                <div id="spotify-player"></div>
-                <div id="c-block" class="cover-blocker"></div>
-                <div id="mask" class="sp-mask">
-                    <span style="font-family:'Bebas Neue'; color:var(--p1); letter-spacing:1px; font-size:14px;">DRUK PLAY ➡️</span>
+        <div class="gbody" id="gbody">
+            <div id="spotify-container"></div>
+            
+            <div id="instruction-text" class="instr">Plaats het nummer in jouw tijdlijn</div>
+            <div id="active-tl"></div>
+        </div>
+
+        <div class="action-bar">
+            <div id="ab-play">
+                <button id="play-btn" class="btn btn-p1" onclick="startMusic()">▶ START MUZIEK</button>
+            </div>
+            
+            <div id="ab-challenge-ask" style="display:none; text-align:center;">
+                <div style="font-size: 15px; margin-bottom: 5px;"><strong>Gegokt!</strong> <span id="opp-name"></span>, wil jij challengen?</div>
+                <div class="flex-btns">
+                    <button class="btn btn-gold" onclick="acceptChallenge()">JA, IK STEEL!</button>
+                    <button class="btn btn-gray" onclick="declineChallenge()">NEE</button>
                 </div>
             </div>
-            <div id="active-tl" style="margin-top: 10px;"></div>
+
+            <div id="ab-challenge-pick" style="display:none; text-align:center;">
+                <div style="color: var(--gold); font-family: 'Bebas Neue'; font-size: 22px;">CHALLENGE ACTIEF</div>
+                <div style="font-size: 13px; color: var(--mut);">Kies waar het volgens jou hoort op de tijdlijn.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="rm-title" class="modal-title"></div>
+            <div class="modal-song">
+                <span id="rm-year" class="y"></span>
+                <span id="rm-title-txt" class="t"></span>
+                <span id="rm-artist" class="a"></span>
+            </div>
+            <div id="rm-desc" class="modal-desc"></div>
+            <button class="btn btn-p1" onclick="closeModal()">VOLGENDE BEURT</button>
         </div>
     </div>
 
     <script>
         const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
-        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '';
+        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '', currentTid = '';
         let p1 = { name: "", score: 0, timeline: [] };
         let p2 = { name: "", score: 0, timeline: [] };
         let turn = 1, currentSong = null;
+        
+        // Game States: 'playing', 'challenging_pick'
+        let gameState = 'playing'; 
+        let activePlayerGuess = -1;
 
         async function init() {
             try {
@@ -131,10 +149,8 @@
                 const tData = await tRes.json();
                 SP_TOKEN = tData.access_token;
                 document.getElementById('load-status').style.display = 'none';
-                document.getElementById('setup-form').style.display = 'flex';
-            } catch (e) {
-                document.getElementById('load-status').innerHTML = "Fout bij laden.";
-            }
+                document.getElementById('setup-form').style.display = 'block';
+            } catch (e) { document.getElementById('load-status').innerText = "Fout bij inladen data."; }
         }
 
         async function startGame() {
@@ -146,29 +162,51 @@
         }
 
         async function nextRound() {
+            gameState = 'playing';
+            activePlayerGuess = -1;
+            
+            // Haal een nieuw liedje
             currentSong = RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0];
             const q = encodeURIComponent(`${currentSong[1]} ${currentSong[0]}`);
             
             try {
+                // Spotify API (Echte URL)
                 const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
                     headers: {'Authorization': `Bearer ${SP_TOKEN}`}
                 });
                 const d = await r.json();
-                const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
-                document.getElementById('spotify-player').innerHTML = `<iframe src="https://open.spotify.com/embed/track/${tid}" allow="encrypted-media"></iframe>`;
+                currentTid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
             } catch(e) { console.error(e); }
 
-            document.getElementById('mask').classList.remove('hidden');
-            document.getElementById('c-block').classList.remove('hidden');
+            // Reset UI
+            document.getElementById('ab-play').style.display = 'block';
+            document.getElementById('ab-challenge-ask').style.display = 'none';
+            document.getElementById('ab-challenge-pick').style.display = 'none';
+            document.getElementById('play-btn').innerText = "▶ START MUZIEK";
+            document.getElementById('play-btn').style.background = "var(--p1)";
+            document.getElementById('spotify-container').innerHTML = ""; 
             
-            const activeName = turn === 1 ? p1.name : p2.name;
-            document.getElementById('pass-sub').innerText = `${activeName}, jouw beurt!`;
-            document.getElementById('hturn').innerText = activeName;
-            document.getElementById('hp1').innerText = `${p1.name.substring(0,6)}: ${p1.score}`;
-            document.getElementById('hp2').innerText = `${p2.name.substring(0,6)}: ${p2.score}`;
+            const activeP = turn === 1 ? p1 : p2;
+            document.getElementById('hturn').innerText = activeP.name;
+            document.getElementById('hp1').innerText = p1.score;
+            document.getElementById('hp2').innerText = p2.score;
+            document.getElementById('instruction-text').innerText = "Plaats het nummer in jouw tijdlijn";
+            
+            // Scroll helemaal naar boven
+            document.getElementById('gbody').scrollTop = 0;
             
             renderTimeline();
-            showScreen('sp');
+            showScreen('sg');
+        }
+
+        function startMusic() {
+            // Bouw de iframe op met Spotify's embed link
+            document.getElementById('spotify-container').innerHTML = 
+                `<iframe src="https://open.spotify.com/embed/track/${currentTid}?autoplay=1" allow="autoplay; encrypted-media"></iframe>`;
+            
+            const btn = document.getElementById('play-btn');
+            btn.innerText = "🎶 MUZIEK SPEELT...";
+            btn.style.background = "var(--gray)";
         }
 
         function renderTimeline() {
@@ -176,39 +214,123 @@
             const p = turn === 1 ? p1 : p2;
             const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
             
-            let h = `<div class="tins" onclick="check(0)">HIERVOOR ⬇️</div>`;
+            let h = `<div class="tins" onclick="handleSlotClick(0)">HIERVOOR ⬇️</div>`;
             sorted.forEach((s, i) => {
-                h += `<div class="tcard"><span class="tyear">${s[2]}</span><div class="tinfo"><strong>${s[0]}</strong>${s[1]}</div></div>`;
-                if(i < sorted.length - 1) h += `<div class="tins" onclick="check(${i+1})">TUSSENIN ↕️</div>`;
+                h += `<div class="tcard"><span class="tyear">${s[2]}</span><div><span class="t">${s[0]}</span><br><span class="a" style="color:var(--mut);font-size:12px">${s[1]}</span></div></div>`;
+                if(i < sorted.length - 1) h += `<div class="tins" onclick="handleSlotClick(${i+1})">TUSSENIN ↕️</div>`;
             });
-            h += `<div class="tins" onclick="check(${sorted.length})">HIERNA ⬆️</div>`;
+            h += `<div class="tins" onclick="handleSlotClick(${sorted.length})">HIERNA ⬆️</div>`;
             tl.innerHTML = h;
         }
 
-        function check(pos) {
+        // Functie wordt getriggerd als er op een stippellijn-vakje wordt geklikt
+        function handleSlotClick(pos) {
+            if (gameState === 'playing') {
+                // Actieve speler heeft gegokt
+                activePlayerGuess = pos;
+                const oppName = turn === 1 ? p2.name : p1.name;
+                
+                // Vraag de tegenstander
+                document.getElementById('ab-play').style.display = 'none';
+                document.getElementById('opp-name').innerText = oppName;
+                document.getElementById('ab-challenge-ask').style.display = 'block';
+                
+            } else if (gameState === 'challenging_pick') {
+                // Tegenstander heeft de challenge plek gekozen
+                evaluateRound(activePlayerGuess, pos);
+            }
+        }
+
+        function acceptChallenge() {
+            gameState = 'challenging_pick';
+            document.getElementById('ab-challenge-ask').style.display = 'none';
+            document.getElementById('ab-challenge-pick').style.display = 'block';
+            
+            const oppName = turn === 1 ? p2.name : p1.name;
+            document.getElementById('instruction-text').innerHTML = `<span style="color:var(--gold)">${oppName}, klik waar hij volgens jou hoort!</span>`;
+        }
+
+        function declineChallenge() {
+            evaluateRound(activePlayerGuess, -1);
+        }
+
+        function evaluateRound(guessPos, challengePos) {
             const p = turn === 1 ? p1 : p2;
+            const opp = turn === 1 ? p2 : p1;
             const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
             const y = currentSong[2];
             
-            let win = false;
-            if(pos === 0 && y <= sorted[0][2]) win = true;
-            else if(pos === sorted.length && y >= sorted[sorted.length-1][2]) win = true;
-            else if(pos > 0 && pos < sorted.length && y >= sorted[pos-1][2] && y <= sorted[pos][2]) win = true;
+            // Controle functie: klopt deze positie?
+            const isCorrect = (pos) => {
+                if(pos < 0) return false;
+                if(pos === 0 && y <= sorted[0][2]) return true;
+                if(pos === sorted.length && y >= sorted[sorted.length-1][2]) return true;
+                if(pos > 0 && pos < sorted.length && y >= sorted[pos-1][2] && y <= sorted[pos][2]) return true;
+                return false;
+            };
 
-            document.getElementById('mask').classList.add('hidden');
-            document.getElementById('c-block').classList.add('hidden');
+            const pWin = isCorrect(guessPos);
+            const oppWin = challengePos !== -1 ? isCorrect(challengePos) : false;
 
-            setTimeout(() => {
-                if(win) {
-                    alert(`✅ CORRECT!\n\n${currentSong[0]} - ${currentSong[1]} (${y})`);
-                    p.score++;
-                    p.timeline.push(currentSong);
+            // Vul de modal met liedjes info
+            document.getElementById('rm-year').innerText = y;
+            document.getElementById('rm-title-txt').innerText = currentSong[0];
+            document.getElementById('rm-artist').innerText = currentSong[1];
+
+            let title = "";
+            let titleColor = "";
+            let desc = "";
+
+            if (pWin) {
+                // Speler had het goed. (Challenge mislukt automatisch)
+                title = "GOED GERADEN!";
+                titleColor = "var(--gold)";
+                desc = `<strong>${p.name}</strong> heeft de kaart verdiend!`;
+                if(challengePos !== -1) desc += `<br><small style="color:var(--mut)">De challenge van ${opp.name} is mislukt.</small>`;
+                
+                p.score++;
+                p.timeline.push(currentSong);
+            } else {
+                // Speler had het fout.
+                if (challengePos !== -1) {
+                    if (oppWin) {
+                        // Tegenstander had het wél goed!
+                        title = "CHALLENGE GESLAAGD!";
+                        titleColor = "var(--green)";
+                        desc = `<strong>${p.name}</strong> had het fout.<br>🎯 <strong>${opp.name}</strong> had het juist en steelt de kaart!`;
+                        
+                        opp.score++;
+                        opp.timeline.push(currentSong); // Wordt toegevoegd aan de winnaar!
+                    } else {
+                        // Allebei fout
+                        title = "ALLEBEI FOUT!";
+                        titleColor = "var(--p1)";
+                        desc = `Zowel <strong>${p.name}</strong> als <strong>${opp.name}</strong> hadden het niet juist. De kaart gaat weg.`;
+                    }
                 } else {
-                    alert(`❌ FOUT!\n\nDit was ${currentSong[0]} uit ${y}`);
+                    // Geen challenge, speler had het gewoon fout.
+                    title = "HELAAS, FOUT!";
+                    titleColor = "var(--p1)";
+                    desc = `Dat was niet de juiste plek op de tijdlijn.`;
                 }
-                turn = (turn === 1) ? 2 : 1;
-                nextRound();
-            }, 600);
+            }
+
+            document.getElementById('rm-title').innerText = title;
+            document.getElementById('rm-title').style.color = titleColor;
+            document.getElementById('rm-desc').innerHTML = desc;
+
+            // Stop de muziek
+            document.getElementById('spotify-container').innerHTML = "";
+            
+            // Toon modal
+            document.getElementById('result-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+            // Wissel beurt
+            turn = turn === 1 ? 2 : 1;
+            nextRound();
         }
 
         function showScreen(id) {
