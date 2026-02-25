@@ -15,37 +15,23 @@
         body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; min-height: 100dvh; overflow-x: hidden; }
         .screen { display: none; padding: 20px; flex-direction: column; min-height: 100dvh; }
         .screen.active { display: flex; }
-
-        /* Home & Auth */
         #ss { align-items: center; justify-content: center; text-align: center; }
         .lm { font-family: 'Bebas Neue'; font-size: 64px; background: linear-gradient(135deg, #fff, var(--mut)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 5px; letter-spacing: 3px; }
         .sub-logo { font-size: 14px; color: var(--p1); font-weight: bold; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 25px; }
-        .v-info { font-size: 10px; color: var(--mut); margin-bottom: 30px; letter-spacing: 1px; opacity: 0.6; }
-        
+        .v-info { font-size: 10px; color: var(--mut); margin-bottom: 30px; letter-spacing: 1px; }
         .btn { padding: 18px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 22px; cursor: pointer; width: 100%; max-width: 300px; transition: 0.3s; letter-spacing: 1px; }
-        .btn-sp { background: #1DB954; color: #fff; box-shadow: 0 4px 15px rgba(29, 185, 84, 0.2); }
+        .btn-sp { background: #1DB954; color: #fff; }
         .btn-p1 { background: var(--p1); color: #fff; }
-
-        /* Player & Anti-Cheat */
-        .player-box { position: relative; width: 100%; height: 80px; margin: 20px 0; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid #222; }
-        .anti-cheat { position: absolute; top: 0; left: 0; width: 75%; height: 100%; background: #000; z-index: 10; border-right: 2px solid #333; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-        .anti-cheat span { color: #333; font-family: 'Bebas Neue'; font-size: 14px; }
-
-        /* Game Board */
-        .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-top: 10px; }
+        .player-box { position: relative; width: 100%; height: 80px; margin: 20px 0; border-radius: 12px; overflow: hidden; background: #000; }
+        .anti-cheat { position: absolute; top: 0; left: 0; width: 75%; height: 100%; background: #000; z-index: 10; border-right: 2px solid #333; display: flex; align-items: center; justify-content: center; pointer-events: none; color: #333; font-family: 'Bebas Neue'; font-size: 14px; }
+        .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .score { font-family: 'Bebas Neue'; font-size: 32px; }
         .tins { padding: 15px; border: 2px dashed #333; border-radius: 12px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 12px 0; font-size: 18px; }
-        .tcard { background: var(--s2); padding: 14px; border-radius: 12px; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--gold); margin: 6px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .tcard { background: var(--s2); padding: 14px; border-radius: 12px; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--gold); margin: 6px 0; }
         .tyear { font-family: 'Bebas Neue'; font-size: 26px; color: var(--gold); min-width: 65px; }
-
-        /* Input Styles */
-        input { width:100%; padding:15px; background:var(--sur); border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:10px; text-align:center; font-size:16px; outline: none; }
-        input:focus { border-color: var(--p1); }
-
-        /* Modal */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; backdrop-filter: blur(5px); }
+        input { width:100%; padding:15px; background:var(--sur); border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:10px; text-align:center; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
         .modal-content { background: var(--sur); padding: 35px 25px; border-radius: 24px; text-align: center; width: 100%; max-width: 360px; border: 1px solid #333; }
-        .modal-y { font-family: 'Bebas Neue'; font-size: 56px; color: var(--gold); line-height: 1; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -53,82 +39,119 @@
     <div id="ss" class="screen active">
         <div class="lm">MUZIEKSPEL</div>
         <div class="sub-logo">Duo Edition</div>
-        <div class="v-info">BUILD v3.2 | 25 FEB 2026 - 23:15</div>
+        <div class="v-info">BUILD v3.3 | 25 FEB 2026 - 23:30</div>
         
         <div id="auth-box">
-            <p style="margin-bottom: 25px; color: #888; font-size: 14px; padding: 0 30px; line-height: 1.5;">Koppel je Spotify Premium account om te beginnen.</p>
-            <button class="btn btn-sp" onclick="loginSpotify()">VERBIND MET SPOTIFY</button>
+            <button class="btn btn-sp" onclick="redirectToSpotify()">VERBIND MET SPOTIFY</button>
         </div>
 
         <div id="setup-box" style="display:none; width: 100%; max-width: 300px;">
-            <p style="color: #1DB954; font-size: 13px; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px;">✓ SPOTIFY GEKOPPELD</p>
+            <p style="color: #1DB954; font-weight: bold; margin-bottom: 20px;">✓ VERBONDEN</p>
             <input type="text" id="p1n" placeholder="Naam Speler 1">
             <input type="text" id="p2n" placeholder="Naam Speler 2">
-            <button class="btn btn-p1" onclick="startGame()" style="margin-top:10px;">START SPEL</button>
+            <button class="btn btn-p1" onclick="startGame()">START SPEL</button>
         </div>
     </div>
 
     <div id="sg" class="screen">
         <div class="hdr">
             <div id="hp1" class="score" style="color:var(--p1)">0</div>
-            <div style="text-align:center"><small style="letter-spacing:1px; color:var(--mut); font-size: 10px;">AAN DE BEURT</small><div id="hturn" style="font-family:'Bebas Neue'; font-size: 26px;"></div></div>
+            <div style="text-align:center"><small>BEURT VAN</small><div id="hturn" style="font-family:'Bebas Neue'; font-size: 24px;"></div></div>
             <div id="hp2" class="score" style="color:var(--p2)">0</div>
         </div>
-
         <div class="player-box">
             <div class="anti-cheat"><span>🎵 TITEL VERBORGEN</span></div>
             <div id="spotify-wrapper"></div>
         </div>
-
-        <div id="game-ui">
-            <div id="active-tl"></div>
-        </div>
-        
-        <div id="challenge-ui" style="display:none; text-align:center; margin-top: 20px; background: var(--sur); padding: 25px; border-radius: 16px; border: 1px solid #333;">
-            <p style="margin-bottom:20px; font-size: 15px; color: #ccc;">Plaatsing bevestigd. Wil de tegenstander <b>stelen</b>?</p>
-            <button class="btn" style="background:var(--gold); color:#000;" onclick="startChallenge()">JA, IK STEEL!</button>
-            <button class="btn" style="background:var(--gray); margin-top:10px; font-size: 18px;" onclick="resolve(false)">NEE</button>
+        <div id="game-ui"><div id="active-tl"></div></div>
+        <div id="challenge-ui" style="display:none; text-align:center; margin-top: 20px; background: var(--sur); padding: 25px; border-radius: 16px;">
+            <p style="margin-bottom:20px;">Gegokt! Wil de tegenstander stelen?</p>
+            <button class="btn" style="background:var(--gold); color:#000;" onclick="startChallenge()">JA!</button>
+            <button class="btn" style="background:var(--gray); margin-top:10px;" onclick="resolve(false)">NEE</button>
         </div>
     </div>
 
     <div id="rm" class="modal">
         <div class="modal-content">
-            <h2 id="rm-res" style="font-family:'Bebas Neue'; font-size: 36px; letter-spacing: 1px;"></h2>
-            <div class="modal-y" id="rm-y"></div>
-            <div id="rm-title" style="font-weight:bold; font-size:18px; margin-top: 5px;"></div>
-            <div id="rm-artist" style="color:var(--mut); margin-bottom:30px; font-size: 14px;"></div>
+            <h2 id="rm-res" style="font-family:'Bebas Neue'; font-size: 36px;"></h2>
+            <div id="rm-y" style="font-family:'Bebas Neue'; font-size: 56px; color: var(--gold);"></div>
+            <div id="rm-title" style="font-weight:bold;"></div>
+            <div id="rm-artist" style="color:var(--mut); margin-bottom:25px;"></div>
             <button class="btn btn-p1" onclick="closeModal()">VOLGENDE RONDE</button>
         </div>
     </div>
 
     <script>
-        // --- CONFIG ---
-        const CLIENT_ID = 'JOUW_CLIENT_ID_HIER'; // VERGEET DEZE NIET TE PLAKKEN!
-        const REDIRECT_URI = 'https://muziekspel.netlify.app/'; 
+        const CLIENT_ID = 'JOUW_CLIENT_ID_HIER'; 
+        const REDIRECT_URI = 'https://muziekspel.netlify.app/';
         const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
-        
-        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '', turn = 1;
-        let p1 = { name: "", score: 0, timeline: [] }, p2 = { name: "", score: 0, timeline: [] };
-        let currentSong = null, pGuess = -1, isChallenge = false;
 
-        function loginSpotify() {
-            const scope = 'streaming user-read-private user-read-email';
-            // We gebruiken 'token' voor de directe browser-toegang (Implicit Grant)
-            // Als je echt 'code' wilt, moet er een backend tussen zitten.
-            // Voor Netlify/Static sites is 'token' de standaard weg.
-            const url = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&show_dialog=true`;
-            window.location.href = url;
+        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '', turn = 1;
+        let p1 = { name: "", score: 0, timeline: [] }, p2 = { name: "", score: 0, timeline: [] }, currentSong = null, pGuess = -1, isChallenge = false;
+
+        // --- PKCE AUTH HELPER FUNCTIES ---
+        const generateRandomString = (length) => {
+            const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const values = crypto.getRandomValues(new Uint8Array(length));
+            return Array.from(values).map((x) => possible[x % possible.length]).join('');
+        };
+
+        const sha256 = async (plain) => {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(plain);
+            return window.crypto.subtle.digest('SHA-256', data);
+        };
+
+        const base64encode = (input) => {
+            return btoa(String.fromCharCode(...new Uint8Array(input)))
+                .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+        };
+
+        async function redirectToSpotify() {
+            const codeVerifier = generateRandomString(64);
+            const hashed = await sha256(codeVerifier);
+            const codeChallenge = base64encode(hashed);
+            window.localStorage.setItem('code_verifier', codeVerifier);
+
+            const params = new URLSearchParams({
+                response_type: 'code',
+                client_id: CLIENT_ID,
+                scope: 'streaming user-read-private user-read-email',
+                code_challenge_method: 'S256',
+                code_challenge: codeChallenge,
+                redirect_uri: REDIRECT_URI,
+            });
+            window.location.href = `https://accounts.spotify.com/authorize?client_id=${params.toString()}`;
         }
 
-        function checkAuth() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const token = params.get('access_token');
-            if (token) {
-                SP_TOKEN = token;
+        async function getToken(code) {
+            const codeVerifier = window.localStorage.getItem('code_verifier');
+            const payload = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    client_id: CLIENT_ID,
+                    grant_type: 'authorization_code',
+                    code: code,
+                    redirect_uri: REDIRECT_URI,
+                    code_verifier: codeVerifier,
+                }),
+            };
+            const body = await fetch('https://open.spotify.com/embed/track/$3', payload);
+            const response = await body.json();
+            return response.access_token;
+        }
+
+        // --- GAME LOGICA ---
+        async function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+
+            if (code) {
+                SP_TOKEN = await getToken(code);
                 document.getElementById('auth-box').style.display = 'none';
                 document.getElementById('setup-box').style.display = 'block';
-                window.history.replaceState(null, null, ' ');
+                window.history.replaceState({}, document.title, "/");
                 fetch(GITHUB_URL).then(r => r.json()).then(d => { ALL_SONGS = d; RAW_SONGS = [...d]; });
             }
         }
@@ -142,27 +165,18 @@
         }
 
         async function nextRound() {
-            if(RAW_SONGS.length === 0) { alert("Kaarten zijn op!"); return; }
             currentSong = RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0];
-            isChallenge = false;
             const q = encodeURIComponent(`${currentSong[1]} ${currentSong[0]}`);
             const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
                 headers: {'Authorization': `Bearer ${SP_TOKEN}`}
             });
             const d = await r.json();
             const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
-
             document.getElementById('hturn').innerText = (turn === 1 ? p1.name : p2.name);
-            document.getElementById('hp1').innerText = p1.score;
-            document.getElementById('hp2').innerText = p2.score;
-            document.getElementById('game-ui').style.display = 'block';
-            document.getElementById('challenge-ui').style.display = 'none';
-            
-            document.getElementById('spotify-wrapper').innerHTML = 
-                `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allow="autoplay; encrypted-media;"></iframe>`;
-
-            renderTimeline();
-            showScreen('sg');
+            document.getElementById('hp1').innerText = p1.score; document.getElementById('hp2').innerText = p2.score;
+            document.getElementById('game-ui').style.display = 'block'; document.getElementById('challenge-ui').style.display = 'none';
+            document.getElementById('spotify-wrapper').innerHTML = `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allow="autoplay; encrypted-media;"></iframe>`;
+            renderTimeline(); showScreen('sg');
         }
 
         function renderTimeline() {
@@ -176,24 +190,10 @@
             tl.innerHTML = h + `<div class="tins" onclick="handlePick(${sorted.length})">HIERNA ⬆️</div>`;
         }
 
-        function handlePick(pos) {
-            if (!isChallenge) {
-                pGuess = pos;
-                document.getElementById('game-ui').style.display = 'none';
-                document.getElementById('challenge-ui').style.display = 'block';
-            } else { resolve(pos); }
-        }
-
-        function startChallenge() {
-            isChallenge = true;
-            document.getElementById('challenge-ui').style.display = 'none';
-            document.getElementById('game-ui').style.display = 'block';
-        }
-
+        function handlePick(pos) { if (!isChallenge) { pGuess = pos; document.getElementById('game-ui').style.display = 'none'; document.getElementById('challenge-ui').style.display = 'block'; } else { resolve(pos); } }
+        function startChallenge() { isChallenge = true; document.getElementById('challenge-ui').style.display = 'none'; document.getElementById('game-ui').style.display = 'block'; }
         function resolve(cGuess) {
-            const p = (turn === 1 ? p1 : p2), opp = (turn === 1 ? p2 : p1);
-            const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
-            const y = currentSong[2];
+            const p = (turn === 1 ? p1 : p2), opp = (turn === 1 ? p2 : p1), sorted = [...p.timeline].sort((a,b) => a[2] - b[2]), y = currentSong[2];
             const check = (pos) => {
                 if(pos === 0 && y <= sorted[0][2]) return true;
                 if(pos === sorted.length && y >= sorted[sorted.length-1][2]) return true;
@@ -204,19 +204,13 @@
             let res = win ? "CORRECT!" : (cGuess !== false && check(cGuess) ? "GESTEALED!" : "FOUT!");
             if(win) { p.score++; p.timeline.push(currentSong); }
             else if(cGuess !== false && check(cGuess)) { opp.score++; opp.timeline.push(currentSong); }
-            
-            document.getElementById('rm-res').innerText = res;
-            document.getElementById('rm-y').innerText = y;
-            document.getElementById('rm-title').innerText = currentSong[0];
-            document.getElementById('rm-artist').innerText = currentSong[1];
-            document.getElementById('rm').style.display = 'flex';
-            document.getElementById('spotify-wrapper').innerHTML = ""; 
+            document.getElementById('rm-res').innerText = res; document.getElementById('rm-y').innerText = y; document.getElementById('rm-title').innerText = currentSong[0]; document.getElementById('rm-artist').innerText = currentSong[1];
+            document.getElementById('rm').style.display = 'flex'; document.getElementById('spotify-wrapper').innerHTML = ""; 
         }
-
         function closeModal() { document.getElementById('rm').style.display = 'none'; turn = (turn === 1 ? 2 : 1); nextRound(); }
         function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-        checkAuth();
+        init();
     </script>
 </body>
 </html>
