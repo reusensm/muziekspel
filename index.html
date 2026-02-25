@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hitster Duo v2.2</title>
+    <title>Hitster Duo v2.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -28,8 +28,23 @@
         .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .score { font-family: 'Bebas Neue'; font-size: 24px; }
         
-        /* De Player: We maken hem 80px hoog, net genoeg om te laden, maar we zetten hem onderaan */
-        #spotify-wrapper { width: 100%; height: 80px; margin-bottom: 20px; background: #000; border-radius: 12px; overflow: hidden; }
+        /* Spotify Player met Anti-Spiek Masker */
+        .player-container { position: relative; width: 100%; height: 80px; margin-bottom: 20px; border-radius: 12px; overflow: hidden; background: #000; }
+        #spotify-wrapper { width: 100%; height: 100%; }
+        .anti-cheat-mask { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 75%; 
+            height: 100%; 
+            background: #000; 
+            z-index: 5; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            border-right: 2px solid #222;
+        }
+        .anti-cheat-mask::after { content: "🎵 MUZIEK SPEELT..."; color: #444; font-family: 'Bebas Neue'; font-size: 14px; letter-spacing: 1px; }
 
         /* Timeline */
         .tins { padding: 15px; border: 2px dashed #444; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 10px 0; font-size: 18px; }
@@ -51,7 +66,7 @@
 
     <div id="ss" class="screen active">
         <div class="lm">HITSTER</div>
-        <div class="v-info">Versie 2.2 | Laatste update: 25 feb 2026</div>
+        <div class="v-info">Versie 2.3 (Anti-Spiek) | 25 feb 2026</div>
         <div id="load-status"><div class="spinner"></div></div>
         <div id="setup-form" style="display:none; width: 100%; display: flex; flex-direction: column; align-items: center;">
             <div class="pi"><input type="text" id="p1n" placeholder="Naam Speler 1"></div>
@@ -67,7 +82,10 @@
             <div id="hp2" class="score" style="color:var(--p2)">0</div>
         </div>
 
-        <div id="spotify-wrapper"></div>
+        <div class="player-container">
+            <div class="anti-cheat-mask"></div>
+            <div id="spotify-wrapper"></div>
+        </div>
 
         <div id="game-controls">
             <p id="instruction" style="text-align:center; margin-bottom: 10px; color: var(--mut);">Klik op de juiste plek in de tijdlijn</p>
@@ -124,7 +142,6 @@
             currentSong = RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0];
             isChallenge = false;
             
-            // Haal Spotify ID op
             const q = encodeURIComponent(`${currentSong[1]} ${currentSong[0]}`);
             const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
                 headers: {'Authorization': `Bearer ${SP_TOKEN}`}
@@ -132,7 +149,6 @@
             const d = await r.json();
             const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
 
-            // UI Bijwerken
             document.getElementById('hturn').innerText = (turn === 1 ? p1.name : p2.name);
             document.getElementById('hp1').innerText = p1.score;
             document.getElementById('hp2').innerText = p2.score;
@@ -140,7 +156,7 @@
             document.getElementById('challenge-controls').style.display = 'none';
             document.getElementById('instruction').innerText = "Luister en plaats op de tijdlijn";
 
-            // Spotify Player herladen (deze methode werkte het beste)
+            // Spotify Iframe
             document.getElementById('spotify-wrapper').innerHTML = 
                 `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
 
@@ -211,7 +227,7 @@
             document.getElementById('rm-song').innerText = currentSong[0];
             document.getElementById('rm-artist').innerText = currentSong[1];
             document.getElementById('rm').style.display = 'flex';
-            document.getElementById('spotify-wrapper').innerHTML = ""; // Stop muziek
+            document.getElementById('spotify-wrapper').innerHTML = ""; 
         }
 
         function closeModal() {
