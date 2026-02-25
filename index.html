@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hitster Duo v2.3</title>
+    <title>Muziekspel Duo</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,121 +13,121 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; min-height: 100dvh; overflow-x: hidden; }
-        
         .screen { display: none; padding: 20px; flex-direction: column; min-height: 100dvh; }
         .screen.active { display: flex; }
 
-        /* Home */
+        /* Home & Auth */
         #ss { align-items: center; justify-content: center; text-align: center; }
-        .lm { font-family: 'Bebas Neue'; font-size: 60px; background: linear-gradient(135deg, var(--p1), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .v-info { font-size: 10px; color: var(--mut); margin-bottom: 20px; }
-        .pi { background: var(--sur); border-radius: var(--r); padding: 12px; border: 1px solid #333; margin-bottom: 10px; width: 100%; max-width: 300px; }
-        input { background: none; border: none; color: #fff; font-size: 16px; outline: none; width: 100%; text-align: center; }
-
-        /* Game UI */
-        .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .score { font-family: 'Bebas Neue'; font-size: 24px; }
+        .lm { font-family: 'Bebas Neue'; font-size: 64px; background: linear-gradient(135deg, #fff, var(--mut)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 5px; letter-spacing: 3px; }
+        .sub-logo { font-size: 14px; color: var(--p1); font-weight: bold; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 25px; }
+        .v-info { font-size: 10px; color: var(--mut); margin-bottom: 30px; letter-spacing: 1px; opacity: 0.6; }
         
-        /* Spotify Player met Anti-Spiek Masker */
-        .player-container { position: relative; width: 100%; height: 80px; margin-bottom: 20px; border-radius: 12px; overflow: hidden; background: #000; }
-        #spotify-wrapper { width: 100%; height: 100%; }
-        .anti-cheat-mask { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 75%; 
-            height: 100%; 
-            background: #000; 
-            z-index: 5; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            border-right: 2px solid #222;
-        }
-        .anti-cheat-mask::after { content: "🎵 MUZIEK SPEELT..."; color: #444; font-family: 'Bebas Neue'; font-size: 14px; letter-spacing: 1px; }
+        .btn { padding: 18px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 22px; cursor: pointer; width: 100%; max-width: 300px; transition: 0.3s; letter-spacing: 1px; }
+        .btn-sp { background: #1DB954; color: #fff; box-shadow: 0 4px 15px rgba(29, 185, 84, 0.2); }
+        .btn-p1 { background: var(--p1); color: #fff; }
 
-        /* Timeline */
-        .tins { padding: 15px; border: 2px dashed #444; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 10px 0; font-size: 18px; }
-        .tcard { background: var(--s2); padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; border-left: 4px solid var(--gold); margin: 5px 0; }
-        .tyear { font-family: 'Bebas Neue'; font-size: 24px; color: var(--gold); min-width: 60px; }
+        /* Player & Anti-Cheat */
+        .player-box { position: relative; width: 100%; height: 80px; margin: 20px 0; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid #222; }
+        .anti-cheat { position: absolute; top: 0; left: 0; width: 75%; height: 100%; background: #000; z-index: 10; border-right: 2px solid #333; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .anti-cheat span { color: #333; font-family: 'Bebas Neue'; font-size: 14px; }
 
-        .btn { padding: 16px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 20px; cursor: pointer; width: 100%; background: var(--p1); color: #fff; }
-        .btn-gold { background: var(--gold); color: #000; margin-top: 10px; }
-        
+        /* Game Board */
+        .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-top: 10px; }
+        .score { font-family: 'Bebas Neue'; font-size: 32px; }
+        .tins { padding: 15px; border: 2px dashed #333; border-radius: 12px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 12px 0; font-size: 18px; }
+        .tcard { background: var(--s2); padding: 14px; border-radius: 12px; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--gold); margin: 6px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .tyear { font-family: 'Bebas Neue'; font-size: 26px; color: var(--gold); min-width: 65px; }
+
+        /* Input Styles */
+        input { width:100%; padding:15px; background:var(--sur); border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:10px; text-align:center; font-size:16px; outline: none; }
+        input:focus { border-color: var(--p1); }
+
         /* Modal */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-        .modal-content { background: var(--sur); padding: 30px; border-radius: var(--r); text-align: center; width: 100%; max-width: 350px; border: 1px solid #333; }
-        
-        .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: var(--p1); border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--sur); padding: 35px 25px; border-radius: 24px; text-align: center; width: 100%; max-width: 360px; border: 1px solid #333; }
+        .modal-y { font-family: 'Bebas Neue'; font-size: 56px; color: var(--gold); line-height: 1; margin: 10px 0; }
     </style>
 </head>
 <body>
 
     <div id="ss" class="screen active">
-        <div class="lm">HITSTER</div>
-        <div class="v-info">Versie 2.3 (Anti-Spiek) | 25 feb 2026</div>
-        <div id="load-status"><div class="spinner"></div></div>
-        <div id="setup-form" style="display:none; width: 100%; display: flex; flex-direction: column; align-items: center;">
-            <div class="pi"><input type="text" id="p1n" placeholder="Naam Speler 1"></div>
-            <div class="pi"><input type="text" id="p2n" placeholder="Naam Speler 2"></div>
-            <button class="btn" onclick="startGame()">Start Spel</button>
+        <div class="lm">MUZIEKSPEL</div>
+        <div class="sub-logo">Duo Edition</div>
+        <div class="v-info">BUILD v3.2 | 25 FEB 2026 - 23:15</div>
+        
+        <div id="auth-box">
+            <p style="margin-bottom: 25px; color: #888; font-size: 14px; padding: 0 30px; line-height: 1.5;">Koppel je Spotify Premium account om te beginnen.</p>
+            <button class="btn btn-sp" onclick="loginSpotify()">VERBIND MET SPOTIFY</button>
+        </div>
+
+        <div id="setup-box" style="display:none; width: 100%; max-width: 300px;">
+            <p style="color: #1DB954; font-size: 13px; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px;">✓ SPOTIFY GEKOPPELD</p>
+            <input type="text" id="p1n" placeholder="Naam Speler 1">
+            <input type="text" id="p2n" placeholder="Naam Speler 2">
+            <button class="btn btn-p1" onclick="startGame()" style="margin-top:10px;">START SPEL</button>
         </div>
     </div>
 
     <div id="sg" class="screen">
         <div class="hdr">
             <div id="hp1" class="score" style="color:var(--p1)">0</div>
-            <div style="text-align:center"><small>BEURT VAN</small><div id="hturn" style="font-family:'Bebas Neue'; font-size: 20px;"></div></div>
+            <div style="text-align:center"><small style="letter-spacing:1px; color:var(--mut); font-size: 10px;">AAN DE BEURT</small><div id="hturn" style="font-family:'Bebas Neue'; font-size: 26px;"></div></div>
             <div id="hp2" class="score" style="color:var(--p2)">0</div>
         </div>
 
-        <div class="player-container">
-            <div class="anti-cheat-mask"></div>
+        <div class="player-box">
+            <div class="anti-cheat"><span>🎵 TITEL VERBORGEN</span></div>
             <div id="spotify-wrapper"></div>
         </div>
 
-        <div id="game-controls">
-            <p id="instruction" style="text-align:center; margin-bottom: 10px; color: var(--mut);">Klik op de juiste plek in de tijdlijn</p>
+        <div id="game-ui">
             <div id="active-tl"></div>
         </div>
         
-        <div id="challenge-controls" style="display:none; text-align:center; margin-top: 20px; background: var(--sur); padding: 15px; border-radius: 12px;">
-            <p>Gegokt! Wil de tegenstander challengen?</p>
-            <button class="btn btn-gold" onclick="startChallenge()">JA, IK STEEL!</button>
-            <button class="btn" style="background:var(--gray); margin-top:10px;" onclick="resolveRound(false)">NEE</button>
+        <div id="challenge-ui" style="display:none; text-align:center; margin-top: 20px; background: var(--sur); padding: 25px; border-radius: 16px; border: 1px solid #333;">
+            <p style="margin-bottom:20px; font-size: 15px; color: #ccc;">Plaatsing bevestigd. Wil de tegenstander <b>stelen</b>?</p>
+            <button class="btn" style="background:var(--gold); color:#000;" onclick="startChallenge()">JA, IK STEEL!</button>
+            <button class="btn" style="background:var(--gray); margin-top:10px; font-size: 18px;" onclick="resolve(false)">NEE</button>
         </div>
     </div>
 
     <div id="rm" class="modal">
         <div class="modal-content">
-            <h2 id="rm-res" style="font-family:'Bebas Neue'; font-size: 32px; margin-bottom: 10px;"></h2>
-            <div style="background:var(--s2); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                <div id="rm-year" style="font-family:'Bebas Neue'; font-size: 40px; color:var(--gold)"></div>
-                <div id="rm-song" style="font-weight:bold"></div>
-                <div id="rm-artist" style="color:var(--mut)"></div>
-            </div>
-            <button class="btn" onclick="closeModal()">VOLGENDE RONDE</button>
+            <h2 id="rm-res" style="font-family:'Bebas Neue'; font-size: 36px; letter-spacing: 1px;"></h2>
+            <div class="modal-y" id="rm-y"></div>
+            <div id="rm-title" style="font-weight:bold; font-size:18px; margin-top: 5px;"></div>
+            <div id="rm-artist" style="color:var(--mut); margin-bottom:30px; font-size: 14px;"></div>
+            <button class="btn btn-p1" onclick="closeModal()">VOLGENDE RONDE</button>
         </div>
     </div>
 
     <script>
+        // --- CONFIG ---
+        const CLIENT_ID = 'JOUW_CLIENT_ID_HIER'; // VERGEET DEZE NIET TE PLAKKEN!
+        const REDIRECT_URI = 'https://muziekspel.netlify.app/'; 
         const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
+        
         let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '', turn = 1;
         let p1 = { name: "", score: 0, timeline: [] }, p2 = { name: "", score: 0, timeline: [] };
         let currentSong = null, pGuess = -1, isChallenge = false;
 
-        async function init() {
-            try {
-                const sRes = await fetch(GITHUB_URL);
-                ALL_SONGS = await sRes.json();
-                RAW_SONGS = [...ALL_SONGS];
-                const tRes = await fetch('/.netlify/functions/get-token');
-                const tData = await tRes.json();
-                SP_TOKEN = tData.access_token;
-                document.getElementById('load-status').style.display = 'none';
-                document.getElementById('setup-form').style.display = 'flex';
-            } catch (e) { console.error(e); }
+        function loginSpotify() {
+            const scope = 'streaming user-read-private user-read-email';
+            const url = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scope)}`;
+            window.location.href = url;
+        }
+
+        function checkAuth() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const token = params.get('access_token');
+            if (token) {
+                SP_TOKEN = token;
+                document.getElementById('auth-box').style.display = 'none';
+                document.getElementById('setup-box').style.display = 'block';
+                window.history.replaceState(null, null, ' ');
+                fetch(GITHUB_URL).then(r => r.json()).then(d => { ALL_SONGS = d; RAW_SONGS = [...d]; });
+            }
         }
 
         function startGame() {
@@ -139,9 +139,9 @@
         }
 
         async function nextRound() {
+            if(RAW_SONGS.length === 0) { alert("Kaarten zijn op!"); return; }
             currentSong = RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0];
             isChallenge = false;
-            
             const q = encodeURIComponent(`${currentSong[1]} ${currentSong[0]}`);
             const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
                 headers: {'Authorization': `Bearer ${SP_TOKEN}`}
@@ -152,96 +152,68 @@
             document.getElementById('hturn').innerText = (turn === 1 ? p1.name : p2.name);
             document.getElementById('hp1').innerText = p1.score;
             document.getElementById('hp2').innerText = p2.score;
-            document.getElementById('game-controls').style.display = 'block';
-            document.getElementById('challenge-controls').style.display = 'none';
-            document.getElementById('instruction').innerText = "Luister en plaats op de tijdlijn";
-
-            // Spotify Iframe
+            document.getElementById('game-ui').style.display = 'block';
+            document.getElementById('challenge-ui').style.display = 'none';
+            
             document.getElementById('spotify-wrapper').innerHTML = 
-                `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+                `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allow="autoplay; encrypted-media;"></iframe>`;
 
             renderTimeline();
             showScreen('sg');
         }
 
         function renderTimeline() {
-            const tl = document.getElementById('active-tl');
-            const p = (turn === 1 ? p1 : p2);
+            const tl = document.getElementById('active-tl'), p = (turn === 1 ? p1 : p2);
             const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
             let h = `<div class="tins" onclick="handlePick(0)">HIERVOOR ⬇️</div>`;
             sorted.forEach((s, i) => {
-                h += `<div class="tcard"><span class="tyear">${s[2]}</span><div><strong>${s[0]}</strong><br><small>${s[1]}</small></div></div>`;
+                h += `<div class="tcard"><span class="tyear">${s[2]}</span><div><strong>${s[0]}</strong><br><small style="color:var(--mut)">${s[1]}</small></div></div>`;
                 if(i < sorted.length - 1) h += `<div class="tins" onclick="handlePick(${i+1})">TUSSENIN ↕️</div>`;
             });
-            h += `<div class="tins" onclick="handlePick(${sorted.length})">HIERNA ⬆️</div>`;
-            tl.innerHTML = h;
+            tl.innerHTML = h + `<div class="tins" onclick="handlePick(${sorted.length})">HIERNA ⬆️</div>`;
         }
 
         function handlePick(pos) {
             if (!isChallenge) {
                 pGuess = pos;
-                document.getElementById('game-controls').style.display = 'none';
-                document.getElementById('challenge-controls').style.display = 'block';
-            } else {
-                resolveRound(pos);
-            }
+                document.getElementById('game-ui').style.display = 'none';
+                document.getElementById('challenge-ui').style.display = 'block';
+            } else { resolve(pos); }
         }
 
         function startChallenge() {
             isChallenge = true;
-            document.getElementById('challenge-controls').style.display = 'none';
-            document.getElementById('game-controls').style.display = 'block';
-            document.getElementById('instruction').innerHTML = `<b style="color:var(--gold)">CHALLENGE!</b> Klik waar hij volgens jou hoort.`;
+            document.getElementById('challenge-ui').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'block';
         }
 
-        function resolveRound(cGuess) {
-            const p = (turn === 1 ? p1 : p2);
-            const opp = (turn === 1 ? p2 : p1);
+        function resolve(cGuess) {
+            const p = (turn === 1 ? p1 : p2), opp = (turn === 1 ? p2 : p1);
             const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
             const y = currentSong[2];
-
             const check = (pos) => {
                 if(pos === 0 && y <= sorted[0][2]) return true;
                 if(pos === sorted.length && y >= sorted[sorted.length-1][2]) return true;
                 if(pos > 0 && pos < sorted.length && y >= sorted[pos-1][2] && y <= sorted[pos][2]) return true;
                 return false;
             };
-
             let win = check(pGuess);
-            let resultText = "";
-
-            if (win) {
-                resultText = "CORRECT!";
-                p.score++;
-                p.timeline.push(currentSong);
-            } else if (cGuess !== false && check(cGuess)) {
-                resultText = "GESTEALED DOOR " + opp.name.toUpperCase();
-                opp.score++;
-                opp.timeline.push(currentSong);
-            } else {
-                resultText = "FOUT!";
-            }
-
-            document.getElementById('rm-res').innerText = resultText;
-            document.getElementById('rm-year').innerText = y;
-            document.getElementById('rm-song').innerText = currentSong[0];
+            let res = win ? "CORRECT!" : (cGuess !== false && check(cGuess) ? "GESTEALED!" : "FOUT!");
+            if(win) { p.score++; p.timeline.push(currentSong); }
+            else if(cGuess !== false && check(cGuess)) { opp.score++; opp.timeline.push(currentSong); }
+            
+            document.getElementById('rm-res').innerText = res;
+            document.getElementById('rm-y').innerText = y;
+            document.getElementById('rm-title').innerText = currentSong[0];
             document.getElementById('rm-artist').innerText = currentSong[1];
             document.getElementById('rm').style.display = 'flex';
             document.getElementById('spotify-wrapper').innerHTML = ""; 
         }
 
-        function closeModal() {
-            document.getElementById('rm').style.display = 'none';
-            turn = (turn === 1 ? 2 : 1);
-            nextRound();
-        }
+        function closeModal() { document.getElementById('rm').style.display = 'none'; turn = (turn === 1 ? 2 : 1); nextRound(); }
+        function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        init();
+        checkAuth();
     </script>
 </body>
 </html>
