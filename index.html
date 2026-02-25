@@ -113,7 +113,10 @@
 
         function loginSpotify() {
             const scope = 'streaming user-read-private user-read-email';
-            const url = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scope)}`;
+            // We gebruiken 'token' voor de directe browser-toegang (Implicit Grant)
+            // Als je echt 'code' wilt, moet er een backend tussen zitten.
+            // Voor Netlify/Static sites is 'token' de standaard weg.
+            const url = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(scope)}&show_dialog=true`;
             window.location.href = url;
         }
 
