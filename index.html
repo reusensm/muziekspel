@@ -26,10 +26,24 @@
         .hdr { display: flex; justify-content: space-between; padding: 15px; background: var(--sur); align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
         .gbody { padding: 15px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
         
-        .sp-box { position: relative; height: 100px; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #222; }
-        .sp-box iframe { width: 100%; height: 160px; border: none; position: absolute; top: -60px; }
-        .sp-mask { position: absolute; inset: 0; background: var(--sur); z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+        /* SPOTIFY FIX */
+        .sp-box { position: relative; height: 80px; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #222; }
+        .sp-box iframe { width: 100%; height: 80px; border: none; }
+        
+        /* MASKER FIX: Zorgt dat je door de tekst heen kunt klikken */
+        .sp-mask { 
+            position: absolute; 
+            inset: 0; 
+            background: var(--sur); 
+            z-index: 10; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            pointer-events: none; /* CRUCIAAL: Laat klikken door naar Spotify */
+        }
         .sp-mask.hidden { display: none; }
+        .sp-mask span, .sp-mask small { pointer-events: none; } /* Extra veiligheid */
 
         .tins { padding: 12px; border: 2px dashed #333; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 8px 0; transition: 0.2s; font-size: 14px; }
         .tins:hover { background: rgba(255, 208, 96, 0.1); border-color: var(--gold); }
@@ -74,8 +88,8 @@
             <div class="sp-box">
                 <div id="spotify-player"></div>
                 <div id="mask" class="sp-mask">
-                    <span style="font-family:'Bebas Neue'; color:var(--p1); letter-spacing:2px; font-size: 20px;">DRUK OP PLAY</span>
-                    <small style="color:var(--mut)">Geen spieken!</small>
+                    <span style="font-family:'Bebas Neue'; color:var(--p1); letter-spacing:2px; font-size: 18px;">KLIK OP DE PLAY KNOP</span>
+                    <small style="color:var(--mut)">Luister en raad het jaar</small>
                 </div>
             </div>
             <div id="active-tl"></div>
@@ -115,14 +129,19 @@
         async function nextRound() {
             currentSong = RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0];
             const q = encodeURIComponent(`${currentSong[1]} ${currentSong[0]}`);
-            const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
-                headers: {'Authorization': `Bearer ${SP_TOKEN}`}
-            });
-            const d = await r.json();
-            const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
+            
+            try {
+                const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
+                    headers: {'Authorization': `Bearer ${SP_TOKEN}`}
+                });
+                const d = await r.json();
+                const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
+                document.getElementById('spotify-player').innerHTML = `<iframe src="https://open.spotify.com/embed/track/${tid}" allow="encrypted-media"></iframe>`;
+            } catch(e) {
+                document.getElementById('spotify-player').innerHTML = "Spotify error";
+            }
 
             document.getElementById('mask').classList.remove('hidden');
-            document.getElementById('spotify-player').innerHTML = `<iframe src="https://open.spotify.com/embed/track/${tid}" allow="encrypted-media"></iframe>`;
             
             const activeName = turn === 1 ? p1.name : p2.name;
             document.getElementById('pass-sub').innerText = `${activeName}, jij bent aan de beurt!`;
