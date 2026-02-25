@@ -2,5 +2,5 @@
   publish = "."
   functions = "netlify/functions"
 
-[functions]
-  node_bundle = true
+# We laten de [functions] sectie leeg of weg, 
+# zodat Netlify de standaard instellingen gebruikt.
