@@ -16,40 +16,43 @@
         .screen { display: none; padding: 20px; flex-direction: column; min-height: 100dvh; }
         .screen.active { display: flex; }
         #ss { align-items: center; justify-content: center; text-align: center; }
-        .lm { font-family: 'Bebas Neue'; font-size: 64px; background: linear-gradient(135deg, #fff, var(--mut)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 5px; letter-spacing: 3px; }
-        .sub-logo { font-size: 14px; color: var(--p1); font-weight: bold; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 25px; }
-        .v-info { font-size: 10px; color: var(--mut); margin-bottom: 30px; letter-spacing: 1px; }
-        .btn { padding: 18px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 22px; cursor: pointer; width: 100%; max-width: 300px; transition: 0.3s; letter-spacing: 1px; }
-        .btn-sp { background: #1DB954; color: #fff; }
-        .btn-p1 { background: var(--p1); color: #fff; }
-        .player-box { position: relative; width: 100%; height: 80px; margin: 20px 0; border-radius: 12px; overflow: hidden; background: #000; }
-        .anti-cheat { position: absolute; top: 0; left: 0; width: 75%; height: 100%; background: #000; z-index: 10; border-right: 2px solid #333; display: flex; align-items: center; justify-content: center; pointer-events: none; color: #333; font-family: 'Bebas Neue'; font-size: 14px; }
-        .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .lm { font-family: 'Bebas Neue'; font-size: 60px; background: linear-gradient(135deg, var(--p1), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .v-info { font-size: 10px; color: var(--mut); margin-bottom: 20px; }
+        .pi { background: var(--sur); border-radius: var(--r); padding: 12px; border: 1px solid #333; margin-bottom: 10px; width: 100%; max-width: 300px; }
+        input { background: none; border: none; color: #fff; font-size: 16px; outline: none; width: 100%; text-align: center; }
+        .btn { padding: 16px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 20px; cursor: pointer; width: 100%; background: var(--p1); color: #fff; max-width: 300px; }
+        .btn-spotify { background: #1DB954; margin-bottom: 15px; }
+        .player-container { position: relative; width: 100%; height: 80px; margin-bottom: 20px; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid #222; }
+        .anti-cheat-mask { position: absolute; top: 0; left: 0; width: 75%; height: 100%; background: #000; z-index: 5; display: flex; align-items: center; justify-content: center; border-right: 2px solid #222; pointer-events: none; }
+        .anti-cheat-mask::after { content: "🎵 TITEL VERBORGEN"; color: #333; font-family: 'Bebas Neue'; font-size: 14px; }
+        .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .score { font-family: 'Bebas Neue'; font-size: 32px; }
-        .tins { padding: 15px; border: 2px dashed #333; border-radius: 12px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 12px 0; font-size: 18px; }
-        .tcard { background: var(--s2); padding: 14px; border-radius: 12px; display: flex; align-items: center; gap: 15px; border-left: 5px solid var(--gold); margin: 6px 0; }
-        .tyear { font-family: 'Bebas Neue'; font-size: 26px; color: var(--gold); min-width: 65px; }
-        input { width:100%; padding:15px; background:var(--sur); border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:10px; text-align:center; }
+        .tins { padding: 15px; border: 2px dashed #444; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 10px 0; font-size: 18px; }
+        .tcard { background: var(--s2); padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; border-left: 4px solid var(--gold); margin: 5px 0; }
+        .tyear { font-family: 'Bebas Neue'; font-size: 24px; color: var(--gold); min-width: 60px; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-        .modal-content { background: var(--sur); padding: 35px 25px; border-radius: 24px; text-align: center; width: 100%; max-width: 360px; border: 1px solid #333; }
+        .modal-content { background: var(--sur); padding: 30px; border-radius: var(--r); text-align: center; width: 100%; max-width: 350px; border: 1px solid #333; }
+        .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: var(--p1); border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="ss" class="screen active">
         <div class="lm">MUZIEKSPEL</div>
-        <div class="sub-logo">Duo Edition</div>
-        <div class="v-info">BUILD v3.3 | 25 FEB 2026 - 23:30</div>
+        <div class="v-info">Versie 3.5 (Premium PKCE) | 25 feb 2026</div>
         
-        <div id="auth-box">
-            <button class="btn btn-sp" onclick="redirectToSpotify()">VERBIND MET SPOTIFY</button>
+        <div id="load-status"><div class="spinner"></div></div>
+
+        <div id="auth-section" style="display:none;">
+            <p style="color:var(--mut); font-size:14px; margin-bottom:20px; padding:0 30px;">Login met Spotify Premium voor volledige nummers.</p>
+            <button class="btn btn-spotify" onclick="loginWithSpotify()">VERBIND SPOTIFY</button>
         </div>
 
-        <div id="setup-box" style="display:none; width: 100%; max-width: 300px;">
-            <p style="color: #1DB954; font-weight: bold; margin-bottom: 20px;">✓ VERBONDEN</p>
-            <input type="text" id="p1n" placeholder="Naam Speler 1">
-            <input type="text" id="p2n" placeholder="Naam Speler 2">
-            <button class="btn btn-p1" onclick="startGame()">START SPEL</button>
+        <div id="setup-form" style="display:none; width: 100%; flex-direction: column; align-items: center;">
+            <div class="pi"><input type="text" id="p1n" placeholder="Naam Speler 1"></div>
+            <div class="pi"><input type="text" id="p2n" placeholder="Naam Speler 2"></div>
+            <button class="btn" onclick="startGame()">START SPEL</button>
         </div>
     </div>
 
@@ -59,103 +62,87 @@
             <div style="text-align:center"><small>BEURT VAN</small><div id="hturn" style="font-family:'Bebas Neue'; font-size: 24px;"></div></div>
             <div id="hp2" class="score" style="color:var(--p2)">0</div>
         </div>
-        <div class="player-box">
-            <div class="anti-cheat"><span>🎵 TITEL VERBORGEN</span></div>
+        <div class="player-container">
+            <div class="anti-cheat-mask"></div>
             <div id="spotify-wrapper"></div>
         </div>
-        <div id="game-ui"><div id="active-tl"></div></div>
-        <div id="challenge-ui" style="display:none; text-align:center; margin-top: 20px; background: var(--sur); padding: 25px; border-radius: 16px;">
-            <p style="margin-bottom:20px;">Gegokt! Wil de tegenstander stelen?</p>
-            <button class="btn" style="background:var(--gold); color:#000;" onclick="startChallenge()">JA!</button>
-            <button class="btn" style="background:var(--gray); margin-top:10px;" onclick="resolve(false)">NEE</button>
+        <div id="game-controls"><div id="active-tl"></div></div>
+        <div id="challenge-controls" style="display:none; text-align:center; margin-top: 20px; background: var(--sur); padding: 15px; border-radius: 12px;">
+            <button class="btn btn-gold" onclick="startChallenge()">JA, IK STEEL!</button>
+            <button class="btn" style="background:var(--gray); margin-top:10px;" onclick="resolveRound(false)">NEE</button>
         </div>
     </div>
 
     <div id="rm" class="modal">
         <div class="modal-content">
-            <h2 id="rm-res" style="font-family:'Bebas Neue'; font-size: 36px;"></h2>
-            <div id="rm-y" style="font-family:'Bebas Neue'; font-size: 56px; color: var(--gold);"></div>
-            <div id="rm-title" style="font-weight:bold;"></div>
-            <div id="rm-artist" style="color:var(--mut); margin-bottom:25px;"></div>
-            <button class="btn btn-p1" onclick="closeModal()">VOLGENDE RONDE</button>
+            <h2 id="rm-res" style="font-family:'Bebas Neue'; font-size: 32px; margin-bottom: 10px;"></h2>
+            <div id="rm-year" style="font-family:'Bebas Neue'; font-size: 40px; color:var(--gold)"></div>
+            <div id="rm-song" style="font-weight:bold"></div>
+            <div id="rm-artist" style="color:var(--mut); margin-bottom: 20px;"></div>
+            <button class="btn" onclick="closeModal()">VOLGENDE RONDE</button>
         </div>
     </div>
 
     <script>
-        const CLIENT_ID = 'JOUW_CLIENT_ID_HIER'; 
-        const REDIRECT_URI = 'https://muziekspel.netlify.app';
         const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
-
-        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '', turn = 1;
+        const REDIRECT_URI = 'https://muziekspel.netlify.app';
+        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '', turn = 1, CLIENT_ID = '';
         let p1 = { name: "", score: 0, timeline: [] }, p2 = { name: "", score: 0, timeline: [] }, currentSong = null, pGuess = -1, isChallenge = false;
 
-        // --- PKCE AUTH HELPER FUNCTIES ---
-        const generateRandomString = (length) => {
-            const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            const values = crypto.getRandomValues(new Uint8Array(length));
-            return Array.from(values).map((x) => possible[x % possible.length]).join('');
-        };
-
-        const sha256 = async (plain) => {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(plain);
-            return window.crypto.subtle.digest('SHA-256', data);
-        };
-
-        const base64encode = (input) => {
-            return btoa(String.fromCharCode(...new Uint8Array(input)))
-                .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-        };
-
-        async function redirectToSpotify() {
-            const codeVerifier = generateRandomString(64);
-            const hashed = await sha256(codeVerifier);
-            const codeChallenge = base64encode(hashed);
-            window.localStorage.setItem('code_verifier', codeVerifier);
-
-            const params = new URLSearchParams({
-                response_type: 'code',
-                client_id: CLIENT_ID,
-                scope: 'streaming user-read-private user-read-email',
-                code_challenge_method: 'S256',
-                code_challenge: codeChallenge,
-                redirect_uri: REDIRECT_URI,
-            });
-            window.location.href = `https://accounts.spotify.com/authorize?client_id=${params.toString()}`;
-        }
-
-        async function getToken(code) {
-            const codeVerifier = window.localStorage.getItem('code_verifier');
-            const payload = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    client_id: CLIENT_ID,
-                    grant_type: 'authorization_code',
-                    code: code,
-                    redirect_uri: REDIRECT_URI,
-                    code_verifier: codeVerifier,
-                }),
-            };
-            const body = await fetch('https://open.spotify.com/embed/track/$3', payload);
-            const response = await body.json();
-            return response.access_token;
-        }
-
-        // --- GAME LOGICA ---
+        // --- AUTH FLOW ---
         async function init() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
+            try {
+                // 1. Haal ID op via jouw Netlify function (Client ID is niet geheim, dus dit mag)
+                const configRes = await fetch('/.netlify/functions/get-token'); 
+                const configData = await configRes.json();
+                // We gebruiken hier een trucje: we gaan ervan uit dat je get-token.js ook de clientId kan teruggeven
+                // Als dat niet zo is, plak dan hier je Client ID eenmalig:
+                CLIENT_ID = 'HIER_JE_SPOTIFY_CLIENT_ID_PLAKKEN'; 
 
-            if (code) {
-                SP_TOKEN = await getToken(code);
-                document.getElementById('auth-box').style.display = 'none';
-                document.getElementById('setup-box').style.display = 'block';
-                window.history.replaceState({}, document.title, "/");
-                fetch(GITHUB_URL).then(r => r.json()).then(d => { ALL_SONGS = d; RAW_SONGS = [...d]; });
-            }
+                // 2. Check of we terugkomen van een Spotify Login
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+
+                if (code) {
+                    // Wissel de code in voor een token via je Netlify function
+                    const tRes = await fetch('/.netlify/functions/get-token', {
+                        method: 'POST',
+                        body: JSON.stringify({ code, redirect_uri: REDIRECT_URI })
+                    });
+                    const tData = await tRes.json();
+                    SP_TOKEN = tData.access_token;
+                    showSetup();
+                } else {
+                    document.getElementById('load-status').style.display = 'none';
+                    document.getElementById('auth-section').style.display = 'block';
+                }
+
+                const sRes = await fetch(GITHUB_URL);
+                ALL_SONGS = await sRes.json();
+                RAW_SONGS = [...ALL_SONGS];
+            } catch (e) { console.error("Init error:", e); }
         }
 
+        function loginWithSpotify() {
+            const scope = 'streaming user-read-private user-read-email';
+            // De "Deftige" Auth Code Flow URL
+            const authUrl = `https://open.spotify.com/embed/track/$1` +
+                `client_id=${CLIENT_ID}&` +
+                `response_type=code&` +
+                `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
+                `scope=${encodeURIComponent(scope)}&` +
+                `show_dialog=true`;
+            window.location.href = authUrl;
+        }
+
+        function showSetup() {
+            document.getElementById('load-status').style.display = 'none';
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('setup-form').style.display = 'flex';
+            window.history.replaceState({}, document.title, "/");
+        }
+
+        // --- GAME LOGICA (Hetzelfde als jouw v2.3) ---
         function startGame() {
             p1.name = document.getElementById('p1n').value || "Speler 1";
             p2.name = document.getElementById('p2n').value || "Speler 2";
@@ -166,17 +153,25 @@
 
         async function nextRound() {
             currentSong = RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0];
+            isChallenge = false;
             const q = encodeURIComponent(`${currentSong[1]} ${currentSong[0]}`);
             const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
                 headers: {'Authorization': `Bearer ${SP_TOKEN}`}
             });
             const d = await r.json();
             const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
+
             document.getElementById('hturn').innerText = (turn === 1 ? p1.name : p2.name);
-            document.getElementById('hp1').innerText = p1.score; document.getElementById('hp2').innerText = p2.score;
-            document.getElementById('game-ui').style.display = 'block'; document.getElementById('challenge-ui').style.display = 'none';
-            document.getElementById('spotify-wrapper').innerHTML = `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allow="autoplay; encrypted-media;"></iframe>`;
-            renderTimeline(); showScreen('sg');
+            document.getElementById('hp1').innerText = p1.score;
+            document.getElementById('hp2').innerText = p2.score;
+            document.getElementById('game-controls').style.display = 'block';
+            document.getElementById('challenge-controls').style.display = 'none';
+
+            document.getElementById('spotify-wrapper').innerHTML = 
+                `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allow="autoplay; encrypted-media;"></iframe>`;
+
+            renderTimeline();
+            showScreen('sg');
         }
 
         function renderTimeline() {
@@ -184,15 +179,28 @@
             const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
             let h = `<div class="tins" onclick="handlePick(0)">HIERVOOR ⬇️</div>`;
             sorted.forEach((s, i) => {
-                h += `<div class="tcard"><span class="tyear">${s[2]}</span><div><strong>${s[0]}</strong><br><small style="color:var(--mut)">${s[1]}</small></div></div>`;
+                h += `<div class="tcard"><span class="tyear">${s[2]}</span><div><strong>${s[0]}</strong><br><small>${s[1]}</small></div></div>`;
                 if(i < sorted.length - 1) h += `<div class="tins" onclick="handlePick(${i+1})">TUSSENIN ↕️</div>`;
             });
-            tl.innerHTML = h + `<div class="tins" onclick="handlePick(${sorted.length})">HIERNA ⬆️</div>`;
+            h += `<div class="tins" onclick="handlePick(${sorted.length})">HIERNA ⬆️</div>`;
+            tl.innerHTML = h;
         }
 
-        function handlePick(pos) { if (!isChallenge) { pGuess = pos; document.getElementById('game-ui').style.display = 'none'; document.getElementById('challenge-ui').style.display = 'block'; } else { resolve(pos); } }
-        function startChallenge() { isChallenge = true; document.getElementById('challenge-ui').style.display = 'none'; document.getElementById('game-ui').style.display = 'block'; }
-        function resolve(cGuess) {
+        function handlePick(pos) {
+            if (!isChallenge) {
+                pGuess = pos;
+                document.getElementById('game-controls').style.display = 'none';
+                document.getElementById('challenge-controls').style.display = 'block';
+            } else { resolveRound(pos); }
+        }
+
+        function startChallenge() {
+            isChallenge = true;
+            document.getElementById('challenge-controls').style.display = 'none';
+            document.getElementById('game-controls').style.display = 'block';
+        }
+
+        function resolveRound(cGuess) {
             const p = (turn === 1 ? p1 : p2), opp = (turn === 1 ? p2 : p1), sorted = [...p.timeline].sort((a,b) => a[2] - b[2]), y = currentSong[2];
             const check = (pos) => {
                 if(pos === 0 && y <= sorted[0][2]) return true;
@@ -204,9 +212,10 @@
             let res = win ? "CORRECT!" : (cGuess !== false && check(cGuess) ? "GESTEALED!" : "FOUT!");
             if(win) { p.score++; p.timeline.push(currentSong); }
             else if(cGuess !== false && check(cGuess)) { opp.score++; opp.timeline.push(currentSong); }
-            document.getElementById('rm-res').innerText = res; document.getElementById('rm-y').innerText = y; document.getElementById('rm-title').innerText = currentSong[0]; document.getElementById('rm-artist').innerText = currentSong[1];
+            document.getElementById('rm-res').innerText = res; document.getElementById('rm-year').innerText = y; document.getElementById('rm-song').innerText = currentSong[0]; document.getElementById('rm-artist').innerText = currentSong[1];
             document.getElementById('rm').style.display = 'flex'; document.getElementById('spotify-wrapper').innerHTML = ""; 
         }
+
         function closeModal() { document.getElementById('rm').style.display = 'none'; turn = (turn === 1 ? 2 : 1); nextRound(); }
         function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
