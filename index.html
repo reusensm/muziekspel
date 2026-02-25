@@ -53,7 +53,7 @@
         
         .flex-btns { display: flex; gap: 10px; margin-top: 10px; }
 
-        /* Invisible Spotify */
+        /* Invisible Spotify Backup */
         #spotify-container { width: 1px; height: 1px; opacity: 0; position: absolute; pointer-events: none; }
 
         /* Custom Modal for Results */
@@ -91,7 +91,6 @@
         
         <div class="gbody" id="gbody">
             <div id="spotify-container"></div>
-            
             <div id="instruction-text" class="instr">Plaats het nummer in jouw tijdlijn</div>
             <div id="active-tl"></div>
         </div>
@@ -131,12 +130,15 @@
 
     <script>
         const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
-        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '', currentTid = '';
+        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '';
+        let currentTid = '', currentPreview = null;
         let p1 = { name: "", score: 0, timeline: [] };
         let p2 = { name: "", score: 0, timeline: [] };
         let turn = 1, currentSong = null;
         
-        // Game States: 'playing', 'challenging_pick'
+        // Native HTML Audio speler (werkt perfect voor mobiel)
+        let audioPlayer = new Audio();
+        
         let gameState = 'playing'; 
         let activePlayerGuess = -1;
 
@@ -165,26 +167,31 @@
             gameState = 'playing';
             activePlayerGuess = -1;
             
-            // Haal een nieuw liedje
             currentSong = RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0];
             const q = encodeURIComponent(`${currentSong[1]} ${currentSong[0]}`);
             
             try {
-                // Spotify API (Echte URL)
+                // FIX: Correcte URL's en syntax
                 const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
                     headers: {'Authorization': `Bearer ${SP_TOKEN}`}
                 });
                 const d = await r.json();
-                currentTid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
-            } catch(e) { console.error(e); }
+                const track = d.tracks?.items[0];
+                currentTid = track?.id || "37i9dQZF1DXcBWIGoYBMm1";
+                currentPreview = track?.preview_url || null;
+            } catch(e) { console.error("Spotify Fetch Error:", e); }
 
-            // Reset UI
+            // UI Reset
             document.getElementById('ab-play').style.display = 'block';
             document.getElementById('ab-challenge-ask').style.display = 'none';
             document.getElementById('ab-challenge-pick').style.display = 'none';
             document.getElementById('play-btn').innerText = "▶ START MUZIEK";
             document.getElementById('play-btn').style.background = "var(--p1)";
+            
+            // Stop vorige muziek
             document.getElementById('spotify-container').innerHTML = ""; 
+            audioPlayer.pause(); 
+            audioPlayer.currentTime = 0;
             
             const activeP = turn === 1 ? p1 : p2;
             document.getElementById('hturn').innerText = activeP.name;
@@ -192,21 +199,25 @@
             document.getElementById('hp2').innerText = p2.score;
             document.getElementById('instruction-text').innerText = "Plaats het nummer in jouw tijdlijn";
             
-            // Scroll helemaal naar boven
             document.getElementById('gbody').scrollTop = 0;
-            
             renderTimeline();
             showScreen('sg');
         }
 
         function startMusic() {
-            // Bouw de iframe op met Spotify's embed link
-            document.getElementById('spotify-container').innerHTML = 
-                `<iframe src="https://open.spotify.com/embed/track/${currentTid}?autoplay=1" allow="autoplay; encrypted-media"></iframe>`;
-            
             const btn = document.getElementById('play-btn');
             btn.innerText = "🎶 MUZIEK SPEELT...";
             btn.style.background = "var(--gray)";
+
+            // FIX: Als er een preview is, gebruik de native audio player (onzichtbaar en stabiel op mobiel)
+            if (currentPreview) {
+                audioPlayer.src = currentPreview;
+                audioPlayer.play().catch(e => console.log("Audio fout:", e));
+            } else {
+                // Anders fallback naar verborgen iframe
+                document.getElementById('spotify-container').innerHTML = 
+                    `<iframe src="https://open.spotify.com/embed/track/${currentTid}?autoplay=1" allow="autoplay; encrypted-media"></iframe>`;
+            }
         }
 
         function renderTimeline() {
@@ -223,20 +234,15 @@
             tl.innerHTML = h;
         }
 
-        // Functie wordt getriggerd als er op een stippellijn-vakje wordt geklikt
         function handleSlotClick(pos) {
             if (gameState === 'playing') {
-                // Actieve speler heeft gegokt
                 activePlayerGuess = pos;
                 const oppName = turn === 1 ? p2.name : p1.name;
                 
-                // Vraag de tegenstander
                 document.getElementById('ab-play').style.display = 'none';
                 document.getElementById('opp-name').innerText = oppName;
                 document.getElementById('ab-challenge-ask').style.display = 'block';
-                
             } else if (gameState === 'challenging_pick') {
-                // Tegenstander heeft de challenge plek gekozen
                 evaluateRound(activePlayerGuess, pos);
             }
         }
@@ -260,7 +266,6 @@
             const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
             const y = currentSong[2];
             
-            // Controle functie: klopt deze positie?
             const isCorrect = (pos) => {
                 if(pos < 0) return false;
                 if(pos === 0 && y <= sorted[0][2]) return true;
@@ -272,43 +277,33 @@
             const pWin = isCorrect(guessPos);
             const oppWin = challengePos !== -1 ? isCorrect(challengePos) : false;
 
-            // Vul de modal met liedjes info
             document.getElementById('rm-year').innerText = y;
             document.getElementById('rm-title-txt').innerText = currentSong[0];
             document.getElementById('rm-artist').innerText = currentSong[1];
 
-            let title = "";
-            let titleColor = "";
-            let desc = "";
+            let title = "", titleColor = "", desc = "";
 
             if (pWin) {
-                // Speler had het goed. (Challenge mislukt automatisch)
                 title = "GOED GERADEN!";
                 titleColor = "var(--gold)";
                 desc = `<strong>${p.name}</strong> heeft de kaart verdiend!`;
                 if(challengePos !== -1) desc += `<br><small style="color:var(--mut)">De challenge van ${opp.name} is mislukt.</small>`;
-                
                 p.score++;
                 p.timeline.push(currentSong);
             } else {
-                // Speler had het fout.
                 if (challengePos !== -1) {
                     if (oppWin) {
-                        // Tegenstander had het wél goed!
                         title = "CHALLENGE GESLAAGD!";
                         titleColor = "var(--green)";
                         desc = `<strong>${p.name}</strong> had het fout.<br>🎯 <strong>${opp.name}</strong> had het juist en steelt de kaart!`;
-                        
                         opp.score++;
-                        opp.timeline.push(currentSong); // Wordt toegevoegd aan de winnaar!
+                        opp.timeline.push(currentSong); 
                     } else {
-                        // Allebei fout
                         title = "ALLEBEI FOUT!";
                         titleColor = "var(--p1)";
                         desc = `Zowel <strong>${p.name}</strong> als <strong>${opp.name}</strong> hadden het niet juist. De kaart gaat weg.`;
                     }
                 } else {
-                    // Geen challenge, speler had het gewoon fout.
                     title = "HELAAS, FOUT!";
                     titleColor = "var(--p1)";
                     desc = `Dat was niet de juiste plek op de tijdlijn.`;
@@ -319,25 +314,20 @@
             document.getElementById('rm-title').style.color = titleColor;
             document.getElementById('rm-desc').innerHTML = desc;
 
-            // Stop de muziek
+            // Stop muziek bij het resultaat
             document.getElementById('spotify-container').innerHTML = "";
-            
-            // Toon modal
+            audioPlayer.pause();
+
             document.getElementById('result-modal').style.display = 'flex';
         }
 
         function closeModal() {
             document.getElementById('result-modal').style.display = 'none';
-            // Wissel beurt
             turn = turn === 1 ? 2 : 1;
             nextRound();
         }
 
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
+        showScreen('ss');
         init();
     </script>
 </body>
