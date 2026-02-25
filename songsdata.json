@@ -1,5 +1,4 @@
 [
-  // ── 1950s ──
   ["Rock Around the Clock","Bill Haley & His Comets",1955],
   ["Hound Dog","Elvis Presley",1956],
   ["Jailhouse Rock","Elvis Presley",1957],
@@ -98,7 +97,6 @@
   ["Sixteen Candles","The Crests",1958],
   ["I Only Have Eyes for You","The Flamingos",1959],
   ["Teen Angel","Mark Dinning",1959],
-  // ── 1960s ──
   ["She Loves You","The Beatles",1963],
   ["I Want to Hold Your Hand","The Beatles",1963],
   ["Hey Jude","The Beatles",1968],
@@ -200,7 +198,6 @@
   ["To Sir with Love","Lulu",1967],
   ["Abraham Martin and John","Dion",1968],
   ["Eve of Destruction","Barry McGuire",1965],
-  // ── 1970s ──
   ["Bohemian Rhapsody","Queen",1975],
   ["Stayin' Alive","Bee Gees",1977],
   ["Hotel California","Eagles",1977],
@@ -305,7 +302,6 @@
   ["My Love","Paul McCartney",1973],
   ["Imagine","John Lennon",1971],
   ["Happy Xmas (War Is Over)","John Lennon",1971],
-  // ── 1980s ──
   ["Billie Jean","Michael Jackson",1982],
   ["Beat It","Michael Jackson",1982],
   ["Thriller","Michael Jackson",1982],
@@ -402,7 +398,6 @@
   ["Shout","Tears for Fears",1985],
   ["Everybody Wants to Rule the World","Tears for Fears",1985],
   ["Head Over Heels","Tears for Fears",1985],
-  // ── 1990s ──
   ["Smells Like Teen Spirit","Nirvana",1991],
   ["Come as You Are","Nirvana",1992],
   ["In Bloom","Nirvana",1992],
@@ -505,7 +500,6 @@
   ["Everybody","Backstreet Boys",1997],
   ["Tearin' Up My Heart","NSYNC",1997],
   ["Bye Bye Bye","NSYNC",2000],
-  // ── 2000s ──
   ["Lose Yourself","Eminem",2002],
   ["Slim Shady","Eminem",1999],
   ["Without Me","Eminem",2002],
@@ -591,7 +585,6 @@
   ["Smile Like You Mean It","The Killers",2004],
   ["All These Things That I've Done","The Killers",2003],
   ["Believe","The Killers",2004],
-  // ── 2010s ──
   ["Shape of You","Ed Sheeran",2017],
   ["Thinking Out Loud","Ed Sheeran",2014],
   ["Photograph","Ed Sheeran",2014],
@@ -677,7 +670,6 @@
   ["Emperor's New Clothes","Panic! at the Disco",2015],
   ["Sucker","Jonas Brothers",2019],
   ["Cool","Jonas Brothers",2019],
-  // ── 2020s ──
   ["Levitating","Dua Lipa",2020],
   ["Physical","Dua Lipa",2020],
   ["Don't Start Now","Dua Lipa",2019],
