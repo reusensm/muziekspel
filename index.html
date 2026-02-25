@@ -8,11 +8,11 @@
     <style>
         :root {
             --bg: #0a0a0f; --sur: #13131a; --s2: #1c1c28;
-            --p1: #ff3c5c; --p2: #00d4ff; --gold: #ffd060; --green: #00cc66;
-            --txt: #f0f0f0; --mut: #555; --r: 16px;
+            --p1: #ff3c5c; --p2: #00d4ff; --gold: #ffd060;
+            --txt: #f0f0f0; --mut: #888; --r: 16px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; min-height: 100dvh; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; min-height: 100dvh; }
         
         .screen { display: none; min-height: 100dvh; flex-direction: column; }
         .screen.active { display: flex; }
@@ -20,39 +20,46 @@
         #ss { align-items: center; justify-content: center; gap: 22px; padding: 20px; }
         .lm { font-family: 'Bebas Neue', cursive; font-size: 60px; letter-spacing: 4px; background: linear-gradient(135deg, var(--p1), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .setup { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 12px; }
-        .pi { background: var(--sur); border-radius: var(--r); padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #333; }
+        .pi { background: var(--sur); border-radius: var(--r); padding: 12px; border: 1px solid #333; }
         input { background: none; border: none; color: #fff; font-size: 16px; outline: none; width: 100%; }
 
         .hdr { display: flex; justify-content: space-between; padding: 15px; background: var(--sur); align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
         .gbody { padding: 15px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
         
-        /* SPOTIFY FIX */
-        .sp-box { position: relative; height: 80px; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #222; }
-        .sp-box iframe { width: 100%; height: 80px; border: none; }
+        /* SPOTIFY PLAYER AREA */
+        .sp-box { 
+            position: relative; 
+            height: 152px; /* Standaard Spotify hoogte */
+            background: #000; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 2px solid #222; 
+        }
+        .sp-box iframe { width: 100%; height: 152px; border: none; }
         
-        /* MASKER FIX: Zorgt dat je door de tekst heen kunt klikken */
+        /* HET MASKER: Bedekt alleen de bovenste 80px (info area) */
         .sp-mask { 
             position: absolute; 
-            inset: 0; 
+            top: 0; left: 0; right: 0;
+            height: 80px; 
             background: var(--sur); 
             z-index: 10; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            pointer-events: none; /* CRUCIAAL: Laat klikken door naar Spotify */
+            border-bottom: 2px solid #222;
+            pointer-events: none;
         }
         .sp-mask.hidden { display: none; }
-        .sp-mask span, .sp-mask small { pointer-events: none; } /* Extra veiligheid */
 
-        .tins { padding: 12px; border: 2px dashed #333; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 8px 0; transition: 0.2s; font-size: 14px; }
-        .tins:hover { background: rgba(255, 208, 96, 0.1); border-color: var(--gold); }
+        .tins { padding: 14px; border: 2px dashed #444; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 8px 0; font-size: 16px; }
         .tcard { background: var(--s2); padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; border-left: 4px solid var(--gold); margin: 4px 0; }
-        .tyear { font-family: 'Bebas Neue'; font-size: 22px; color: var(--gold); min-width: 50px; }
-        .tinfo { font-size: 13px; line-height: 1.2; }
-        .tinfo strong { display: block; color: #fff; margin-bottom: 2px; }
+        .tyear { font-family: 'Bebas Neue'; font-size: 24px; color: var(--gold); min-width: 60px; }
+        .tinfo { font-size: 14px; }
+        .tinfo strong { display: block; color: #fff; }
 
-        .btn { padding: 15px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 18px; cursor: pointer; text-transform: uppercase; transition: 0.2s; width: 100%; }
+        .btn { padding: 16px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 20px; cursor: pointer; text-transform: uppercase; width: 100%; }
         .btn-p1 { background: var(--p1); color: #fff; }
 
         .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: var(--p1); border-radius: 50%; animation: spin 1s linear infinite; }
@@ -73,8 +80,8 @@
 
     <div id="sp" class="screen" style="justify-content:center; align-items:center; text-align:center; padding: 20px;">
         <h2 id="pass-title" class="lm" style="font-size:32px;">WISSEL</h2>
-        <p id="pass-sub" style="margin:20px 0; color:var(--mut); font-size: 18px;"></p>
-        <button class="btn btn-p1" onclick="showScreen('sg')">Start beurt</button>
+        <p id="pass-sub" style="margin:20px 0; font-size: 18px;"></p>
+        <button class="btn btn-p1" onclick="showScreen('sg')">Ik ben er klaar voor</button>
     </div>
 
     <div id="sg" class="screen">
@@ -88,11 +95,11 @@
             <div class="sp-box">
                 <div id="spotify-player"></div>
                 <div id="mask" class="sp-mask">
-                    <span style="font-family:'Bebas Neue'; color:var(--p1); letter-spacing:2px; font-size: 18px;">KLIK OP DE PLAY KNOP</span>
-                    <small style="color:var(--mut)">Luister en raad het jaar</small>
+                    <span style="font-family:'Bebas Neue'; color:var(--p1); letter-spacing:2px;">GEHEIM</span>
+                    <small style="color:var(--mut)">Raad het jaartal hieronder</small>
                 </div>
             </div>
-            <div id="active-tl"></div>
+            <div id="active-tl" style="margin-top: 10px;"></div>
         </div>
     </div>
 
@@ -114,7 +121,7 @@
                 document.getElementById('load-status').style.display = 'none';
                 document.getElementById('setup-form').style.display = 'flex';
             } catch (e) {
-                document.getElementById('load-status').innerHTML = "Fout bij laden data.";
+                document.getElementById('load-status').innerHTML = "Fout bij laden.";
             }
         }
 
@@ -136,18 +143,18 @@
                 });
                 const d = await r.json();
                 const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
+                // We gebruiken de standaard embed
                 document.getElementById('spotify-player').innerHTML = `<iframe src="https://open.spotify.com/embed/track/${tid}" allow="encrypted-media"></iframe>`;
             } catch(e) {
-                document.getElementById('spotify-player').innerHTML = "Spotify error";
+                console.error(e);
             }
 
             document.getElementById('mask').classList.remove('hidden');
-            
             const activeName = turn === 1 ? p1.name : p2.name;
-            document.getElementById('pass-sub').innerText = `${activeName}, jij bent aan de beurt!`;
+            document.getElementById('pass-sub').innerText = `${activeName}, jouw beurt!`;
             document.getElementById('hturn').innerText = activeName;
-            document.getElementById('hp1').innerText = `${p1.name}: ${p1.score}`;
-            document.getElementById('hp2').innerText = `${p2.name}: ${p2.score}`;
+            document.getElementById('hp1').innerText = `${p1.name.substring(0,6)}: ${p1.score}`;
+            document.getElementById('hp2').innerText = `${p2.name.substring(0,6)}: ${p2.score}`;
             
             renderTimeline();
             showScreen('sp');
@@ -158,12 +165,12 @@
             const p = turn === 1 ? p1 : p2;
             const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
             
-            let h = `<div class="tins" onclick="check(0)">HIERVOOR</div>`;
+            let h = `<div class="tins" onclick="check(0)">HIERVOOR ⬇️</div>`;
             sorted.forEach((s, i) => {
                 h += `<div class="tcard"><span class="tyear">${s[2]}</span><div class="tinfo"><strong>${s[0]}</strong>${s[1]}</div></div>`;
-                if(i < sorted.length - 1) h += `<div class="tins" onclick="check(${i+1})">TUSSENIN</div>`;
+                if(i < sorted.length - 1) h += `<div class="tins" onclick="check(${i+1})">TUSSENIN ↕️</div>`;
             });
-            h += `<div class="tins" onclick="check(${sorted.length})">HIERNA</div>`;
+            h += `<div class="tins" onclick="check(${sorted.length})">HIERNA ⬆️</div>`;
             tl.innerHTML = h;
         }
 
@@ -189,7 +196,7 @@
                 }
                 turn = (turn === 1) ? 2 : 1;
                 nextRound();
-            }, 500);
+            }, 600);
         }
 
         function showScreen(id) {
