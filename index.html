@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Hitster Duo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #0a0a0f; --sur: #13131a; --s2: #1c1c28;
@@ -12,241 +12,156 @@
             --txt: #f0f0f0; --mut: #555; --r: 16px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; min-height: 100dvh; overflow-x: hidden; overscroll-behavior: none; }
+        body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; min-height: 100dvh; overflow-x: hidden; }
         
-        /* Screens */
         .screen { display: none; min-height: 100dvh; flex-direction: column; }
         .screen.active { display: flex; }
 
-        /* Start Screen Styles */
-        #ss { align-items: center; justify-content: center; gap: 22px; padding: 36px 20px; background: radial-gradient(ellipse at 30% 20%, #1a0a1e, var(--bg) 60%); }
-        .lm { font-family: 'Bebas Neue', cursive; font-size: 68px; letter-spacing: 6px; background: linear-gradient(135deg, var(--p1), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; }
-        .ls { font-size: 12px; letter-spacing: 4px; color: var(--mut); text-transform: uppercase; text-align: center; }
-        .vinyl { width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(#222 0deg, #333 30deg, #222 60deg, #333 90deg, #222 120deg, #333 150deg, #222 180deg, #333 210deg, #222 240deg, #333 270deg, #222 300deg, #333 330deg); position: relative; animation: spin 4s linear infinite; box-shadow: 0 0 36px rgba(255, 60, 92, .35); }
-        .vinyl::after { content: ''; position: absolute; inset: 35%; border-radius: 50%; background: var(--p1); box-shadow: 0 0 12px var(--p1); }
-        @keyframes spin { to { transform: rotate(360deg) } }
+        /* Start Screen */
+        #ss { align-items: center; justify-content: center; gap: 22px; padding: 20px; }
+        .lm { font-family: 'Bebas Neue', cursive; font-size: 68px; letter-spacing: 6px; background: linear-gradient(135deg, var(--p1), var(--p2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .vinyl { width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(#222, #333, #222); animation: spin 4s linear infinite; position: relative; box-shadow: 0 0 30px rgba(255,60,92,0.3); }
+        .vinyl::after { content: ''; position: absolute; inset: 35%; border-radius: 50%; background: var(--p1); }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Form Styles */
-        .setup { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 12px; }
-        .pi { display: flex; align-items: center; gap: 12px; background: var(--sur); border-radius: var(--r); padding: 12px 16px; }
-        .pd { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
-        .pd.p1 { background: var(--p1); box-shadow: 0 0 7px var(--p1); }
-        .pd.p2 { background: var(--p2); box-shadow: 0 0 7px var(--p2); }
-        input[type=text] { background: none; border: none; color: var(--txt); font-family: 'DM Sans', sans-serif; font-size: 16px; flex: 1; outline: none; }
-        input[type=text]::placeholder { color: var(--mut); }
-        .btn { display: block; width: 100%; padding: 14px; border: none; border-radius: var(--r); font-family: 'Bebas Neue', cursive; font-size: 21px; letter-spacing: 3px; cursor: pointer; transition: transform .12s; text-transform: uppercase; }
-        .btn:active { transform: scale(.97); }
-        .btn-red { background: linear-gradient(135deg, var(--p1), #c0004a); color: #fff; box-shadow: 0 4px 18px rgba(255, 60, 92, .4); }
+        /* Setup Form */
+        .setup { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 12px; }
+        .pi { background: var(--sur); border-radius: var(--r); padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .pd { width: 12px; height: 12px; border-radius: 50%; }
+        input { background: none; border: none; color: #fff; font-size: 16px; outline: none; width: 100%; }
+        .btn { padding: 15px; border: none; border-radius: var(--r); font-family: 'Bebas Neue'; font-size: 20px; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .btn-red { background: var(--p1); color: #fff; }
+        .btn:active { transform: scale(0.95); }
 
-        /* Game Header */
-        .hdr { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; background: var(--sur); border-bottom: 1px solid #1a1a28; gap: 8px; position: sticky; top: 0; z-index: 10; }
-        .spill { display: flex; align-items: center; gap: 5px; background: var(--s2); border-radius: 18px; padding: 5px 11px; font-size: 12px; font-weight: 600; }
-        .sdot { width: 9px; height: 9px; border-radius: 50%; }
-        .sdot.p1 { background: var(--p1); }
-        .sdot.p2 { background: var(--p2); }
-        .tbadge { font-family: 'Bebas Neue', cursive; font-size: 11px; letter-spacing: 2px; color: var(--mut); text-align: center; flex: 1; line-height: 1.2; }
-        .tname { display: block; font-size: 16px; color: var(--txt); }
+        /* Game UI */
+        .hdr { display: flex; justify-content: space-between; padding: 15px; background: var(--sur); align-items: center; }
+        .gbody { padding: 15px; flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .sp-wrap { height: 80px; overflow: hidden; border-radius: 12px; background: #000; position: relative; }
+        .sp-wrap iframe { position: absolute; top: -72px; width: 100%; height: 152px; border: none; }
+        
+        /* Timeline */
+        .tins { padding: 12px; border: 2px dashed #333; border-radius: 12px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 5px 0; }
+        .tcard { background: var(--sur); padding: 10px; border-radius: 10px; display: flex; align-items: center; gap: 10px; border-left: 4px solid var(--gold); }
+        .tyear { font-family: 'Bebas Neue'; font-size: 20px; color: var(--gold); }
+        .tinfo { font-size: 12px; color: var(--mut); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* Game Body */
-        .gbody { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 13px; }
-        .player-shell { background: var(--sur); border-radius: 20px; overflow: hidden; position: relative; }
-        .player-shell::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--p1), var(--p2)); z-index: 4; }
-        .player-cover { position: relative; background: linear-gradient(135deg, #120820, #081428); padding: 18px 18px 14px; display: flex; align-items: center; gap: 14px; z-index: 3; }
-        .mini-vinyl { width: 44px; height: 44px; border-radius: 50%; background: #222; position: relative; flex-shrink: 0; }
-        .mini-vinyl.spin { animation: spin 2s linear infinite; box-shadow: 0 0 12px rgba(255, 60, 92, .5); }
-        .player-cover-txt .pct { font-size: 12px; color: var(--mut); }
-        .player-cover-txt .pcb { font-family: 'Bebas Neue', cursive; font-size: 18px; color: var(--gold); }
-        .sp-iframe-wrap { position: relative; height: 80px; overflow: hidden; background: #000; }
-        .sp-iframe-wrap iframe { position: absolute; bottom: 0; left: 0; width: 100%; height: 152px; border: none; }
-
-        /* Timeline Items */
-        .tslot { display: flex; align-items: center; gap: 9px; position: relative; }
-        .tdot { width: 13px; height: 13px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 6px var(--gold); margin-left: 10px; z-index: 1; }
-        .tcard { flex: 1; background: var(--sur); border-radius: 9px; padding: 8px 11px; display: flex; justify-content: space-between; align-items: center; }
-        .tyear { font-family: 'Bebas Neue', cursive; font-size: 18px; color: var(--gold); }
-        .tinfo { font-size: 12px; color: var(--mut); max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .tins { background: rgba(255, 208, 96, .06); border: 2px dashed rgba(255, 208, 96, .22); border-radius: 9px; padding: 12px; color: var(--gold); font-family: 'Bebas Neue', cursive; font-size: 14px; letter-spacing: 2px; cursor: pointer; text-align: center; }
-
-        .spinner { width: 32px; height: 32px; border: 3px solid #333; border-top-color: var(--p1); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto; }
+        .spinner { width: 30px; height: 30px; border: 3px solid #333; border-top-color: var(--p1); border-radius: 50%; animation: spin 1s linear infinite; }
     </style>
 </head>
 <body>
 
     <div id="ss" class="screen active">
         <div class="vinyl"></div>
-        <div>
-            <div class="lm">HITSTER</div>
-            <div class="ls">Duo Edition</div>
-        </div>
-        <div id="load-status">
-            <div class="spinner"></div>
-            <div style="margin-top:8px;text-align:center;font-size:12px;color:var(--mut);">Laden van songs en Spotify...</div>
-        </div>
+        <div class="lm">HITSTER</div>
+        <div id="load-status"><div class="spinner"></div></div>
         <div class="setup" id="setup-form" style="display:none">
-            <div class="pi"><div class="pd p1"></div><input type="text" id="p1n" placeholder="Speler 1" maxlength="12"></div>
-            <div class="pi"><div class="pd p2"></div><input type="text" id="p2n" placeholder="Speler 2" maxlength="12"></div>
+            <div class="pi"><div class="pd" style="background:var(--p1)"></div><input type="text" id="p1n" placeholder="Speler 1"></div>
+            <div class="pi"><div class="pd" style="background:var(--p2)"></div><input type="text" id="p2n" placeholder="Speler 2"></div>
             <button class="btn btn-red" onclick="startGame()">Start Spel</button>
         </div>
     </div>
 
-    <div id="sp" class="screen">
-        <div style="text-align:center;padding:60px 20px;">
-            <div style="font-size:68px;margin-bottom:20px;">📱</div>
-            <div class="lm" style="font-size:36px;">Geef de telefoon!</div>
-            <p id="pass-sub" style="color:var(--mut);margin:20px 0 40px;"></p>
-            <button class="btn btn-red" onclick="showGame()">Ik heb hem!</button>
-        </div>
+    <div id="sp" class="screen" style="justify-content:center; align-items:center; text-align:center;">
+        <h1 class="lm" style="font-size:40px;">Wissel van beurt</h1>
+        <p id="pass-sub" style="margin:20px; color:var(--mut)"></p>
+        <button class="btn btn-red" onclick="showScreen('sg')">Ik heb de telefoon</button>
     </div>
 
     <div id="sg" class="screen">
         <div class="hdr">
-            <div class="spill"><div class="sdot p1"></div><span id="hp1n">P1</span> <strong id="hp1s">0</strong></div>
-            <div class="tbadge">BEURT<span class="tname" id="hturn">—</span></div>
-            <div class="spill"><div class="sdot p2"></div><span id="hp2n">P2</span> <strong id="hp2s">0</strong></div>
+            <div id="hp1" style="color:var(--p1)">P1: 0</div>
+            <div style="text-align:center"><small style="color:var(--mut)">BEURT</small><div id="hturn" style="font-weight:bold"></div></div>
+            <div id="hp2" style="color:var(--p2)">P2: 0</div>
         </div>
-        <div class="gbody" id="gbody"></div>
+        <div class="gbody">
+            <div class="sp-wrap" id="player-area"></div>
+            <div id="active-tl"></div>
+        </div>
     </div>
 
     <script>
-        // --- CONFIGURATIE ---
-        // PLAK HIER JE RAW GITHUB LINK:
-        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/songsdata.json';
-
-        let ALL_SONGS = [];
-        let RAW_SONGS = [];
-        let SP_TOKEN = '';
-        let p1 = { name: "", score: 0, timeline: [] };
-        let p2 = { name: "", score: 0, timeline: [] };
-        let turn = 1;
-        let currentSong = null;
+        const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
+        let ALL_SONGS = [], RAW_SONGS = [], SP_TOKEN = '';
+        let p1 = { name: "", score: 0, timeline: [] }, p2 = { name: "", score: 0, timeline: [] };
+        let turn = 1, currentSong = null;
 
         async function init() {
             try {
-                // 1. Haal liedjes van GitHub
-                const sRes = await fetch(GITHUB_JSON_URL);
+                const sRes = await fetch(GITHUB_URL);
+                if(!sRes.ok) throw new Error();
                 ALL_SONGS = await sRes.json();
                 RAW_SONGS = [...ALL_SONGS];
 
-                // 2. Haal Spotify Token van Netlify Function
                 const tRes = await fetch('/.netlify/functions/get-token');
                 const tData = await tRes.json();
                 SP_TOKEN = tData.access_token;
 
                 document.getElementById('load-status').style.display = 'none';
                 document.getElementById('setup-form').style.display = 'flex';
-            } catch (err) {
-                console.error(err);
-                document.getElementById('load-status').innerHTML = "Fout bij laden. Check de GitHub link.";
+            } catch (e) {
+                document.getElementById('load-status').innerHTML = "Check je GitHub link of JSON syntax.";
             }
         }
 
-        async function spSearch(q) {
-            const r = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(q)}&type=track&limit=1`, {
-                headers: { 'Authorization': 'Bearer ' + SP_TOKEN }
-            });
-            return r.json();
-        }
-
-        function startGame() {
+        async function startGame() {
             p1.name = document.getElementById('p1n').value || "Speler 1";
             p2.name = document.getElementById('p2n').value || "Speler 2";
-            
-            // Beiden krijgen 1 startkaart
             p1.timeline.push(RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0]);
             p2.timeline.push(RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0]);
-            
-            updateHeader();
             nextRound();
         }
 
         async function nextRound() {
-            if (RAW_SONGS.length === 0) { alert("De lijst is op!"); return; }
             currentSong = RAW_SONGS.splice(Math.floor(Math.random()*RAW_SONGS.length), 1)[0];
+            const q = encodeURIComponent(`${currentSong[1]} ${currentSong[0]}`);
+            const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
+                headers: {'Authorization': `Bearer ${SP_TOKEN}`}
+            });
+            const d = await r.json();
+            const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
+
+            document.getElementById('player-area').innerHTML = `<iframe src="https://open.spotify.com/embed/track/${tid}" allow="encrypted-media"></iframe>`;
+            document.getElementById('pass-sub').innerText = `Geef de telefoon aan ${turn === 1 ? p1.name : p2.name}`;
+            document.getElementById('hturn').innerText = turn === 1 ? p1.name : p2.name;
+            document.getElementById('hp1').innerText = `${p1.name}: ${p1.score}`;
+            document.getElementById('hp2').innerText = `${p2.name}: ${p2.score}`;
             
-            const search = await spSearch(`${currentSong[0]} ${currentSong[1]}`);
-            const trackId = search.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
-
-            showScreen('sp');
-            document.getElementById('pass-sub').innerText = `Het is de beurt aan ${turn === 1 ? p1.name : p2.name}`;
-            renderGame(trackId);
-        }
-
-        function renderGame(trackId) {
-            const body = document.getElementById('gbody');
-            body.innerHTML = `
-                <div class="player-shell">
-                    <div class="player-cover">
-                        <div class="mini-vinyl spin"></div>
-                        <div class="player-cover-txt">
-                            <div class="pct">LUISTER GOED</div>
-                            <div class="pcb">Plaats het in je tijdlijn</div>
-                        </div>
-                    </div>
-                    <div class="sp-iframe-wrap">
-                        <iframe src="https://open.spotify.com/embed/track/${trackId}" allow="encrypted-media"></iframe>
-                    </div>
-                </div>
-                <div id="active-tl"></div>
-            `;
             renderTimeline();
+            showScreen('sp');
         }
 
         function renderTimeline() {
             const tl = document.getElementById('active-tl');
-            const player = turn === 1 ? p1 : p2;
-            const sorted = [...player.timeline].sort((a,b) => a[2] - b[2]);
-            
-            let html = `<div class="tins" onclick="check(0)">DIT IS VOOR ${sorted[0][2]}</div>`;
-            sorted.forEach((song, i) => {
-                html += `
-                    <div class="tslot">
-                        <div class="tdot"></div>
-                        <div class="tcard"><span class="tyear">${song[2]}</span><span class="tinfo">${song[0]}</span></div>
-                    </div>`;
-                if(i < sorted.length - 1) {
-                    html += `<div class="tins" onclick="check(${i+1})">TUSSEN ${sorted[i][2]} EN ${sorted[i+1][2]}</div>`;
-                }
+            const p = turn === 1 ? p1 : p2;
+            const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
+            let h = `<div class="tins" onclick="check(0)">VOOR ${sorted[0][2]}</div>`;
+            sorted.forEach((s, i) => {
+                h += `<div class="tcard"><span class="tyear">${s[2]}</span><div class="tinfo"><strong>${s[1]}</strong><br>${s[0]}</div></div>`;
+                if(i < sorted.length - 1) h += `<div class="tins" onclick="check(${i+1})">TUSSEN ${s[2]} EN ${sorted[i+1][2]}</div>`;
             });
-            html += `<div class="tins" onclick="check(${sorted.length})">DIT IS NA ${sorted[sorted.length-1][2]}</div>`;
-            tl.innerHTML = html;
+            h += `<div class="tins" onclick="check(${sorted.length})">NA ${sorted[sorted.length-1][2]}</div>`;
+            tl.innerHTML = h;
         }
 
         function check(pos) {
-            const player = turn === 1 ? p1 : p2;
-            const sorted = [...player.timeline].sort((a,b) => a[2] - b[2]);
-            const year = currentSong[2];
-            
-            let correct = false;
-            if(pos === 0 && year <= sorted[0][2]) correct = true;
-            else if(pos === sorted.length && year >= sorted[sorted.length-1][2]) correct = true;
-            else if(pos > 0 && pos < sorted.length && year >= sorted[pos-1][2] && year <= sorted[pos][2]) correct = true;
+            const p = turn === 1 ? p1 : p2;
+            const sorted = [...p.timeline].sort((a,b) => a[2] - b[2]);
+            const y = currentSong[2];
+            let win = false;
+            if(pos === 0 && y <= sorted[0][2]) win = true;
+            else if(pos === sorted.length && y >= sorted[sorted.length-1][2]) win = true;
+            else if(pos > 0 && pos < sorted.length && y >= sorted[pos-1][2] && y <= sorted[pos][2]) win = true;
 
-            if(correct) {
-                alert(`✅ GOED! ${currentSong[0]} (${currentSong[2]})`);
-                player.score++;
-                player.timeline.push(currentSong);
-            } else {
-                alert(`❌ HELAAS! Dit was uit ${currentSong[2]}`);
-            }
-
+            alert(win ? `✅ GOED! (${y})` : `❌ FOUT! Dit was ${y}`);
+            if(win) { p.score++; p.timeline.push(currentSong); }
             turn = turn === 1 ? 2 : 1;
-            updateHeader();
             nextRound();
-        }
-
-        function updateHeader() {
-            document.getElementById('hp1n').innerText = p1.name;
-            document.getElementById('hp2n').innerText = p2.name;
-            document.getElementById('hp1s').innerText = p1.score;
-            document.getElementById('hp2s').innerText = p2.score;
-            document.getElementById('hturn').innerText = turn === 1 ? p1.name : p2.name;
         }
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
-        function showGame() { showScreen('sg'); }
 
         init();
     </script>
