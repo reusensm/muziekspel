@@ -110,7 +110,7 @@ async function init() {
     SP_TOKEN = tokenData.access_token;
 
     // 2. Fetch Songs from JSON file
-    const songRes = await fetch('songs.json');
+    const songRes = await fetch('songsdata.json');
     RAW_SONGS = await songRes.json();
 
     document.getElementById('load-status').style.display = 'none';

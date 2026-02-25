@@ -2,5 +2,8 @@
   publish = "."
   functions = "netlify/functions"
 
-# We laten de [functions] sectie leeg of weg, 
-# zodat Netlify de standaard instellingen gebruikt.
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Content-Type = "application/json"
+    Access-Control-Allow-Origin = "*"
