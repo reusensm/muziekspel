@@ -26,32 +26,44 @@
         .hdr { display: flex; justify-content: space-between; padding: 15px; background: var(--sur); align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
         .gbody { padding: 15px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
         
-        /* SPOTIFY PLAYER AREA */
+        /* SPOTIFY AREA */
         .sp-box { 
             position: relative; 
-            height: 152px; /* Standaard Spotify hoogte */
+            height: 80px; 
             background: #000; 
             border-radius: 12px; 
             overflow: hidden; 
             border: 2px solid #222; 
         }
-        .sp-box iframe { width: 100%; height: 152px; border: none; }
+        .sp-box iframe { width: 100%; height: 80px; border: none; }
         
-        /* HET MASKER: Bedekt alleen de bovenste 80px (info area) */
+        /* HET MASKER: Bedekt nu de LINKER helft (albumhoes) en de BOVENKANT */
         .sp-mask { 
             position: absolute; 
-            top: 0; left: 0; right: 0;
-            height: 80px; 
+            inset: 0;
             background: var(--sur); 
             z-index: 10; 
             display: flex; 
-            flex-direction: column; 
             align-items: center; 
-            justify-content: center; 
-            border-bottom: 2px solid #222;
+            justify-content: flex-end; /* Tekst naar rechts waar de playknop zit */
+            padding-right: 20px;
+            clip-path: inset(0 60px 0 0); /* Verbergt alles BEHALVE de rechter 60px */
+            background: linear-gradient(90deg, var(--sur) 0%, var(--sur) 70%, transparent 100%);
             pointer-events: none;
         }
-        .sp-mask.hidden { display: none; }
+        
+        /* Alternatieve simpele zwarte balk voor de linkerhelft */
+        .cover-blocker {
+            position: absolute;
+            top: 0; left: 0;
+            width: 80px; /* Blokkeert precies de albumhoes */
+            height: 80px;
+            background: #000;
+            z-index: 11;
+            pointer-events: none;
+        }
+
+        .sp-mask.hidden, .cover-blocker.hidden { display: none; }
 
         .tins { padding: 14px; border: 2px dashed #444; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; cursor: pointer; margin: 8px 0; font-size: 16px; }
         .tcard { background: var(--s2); padding: 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; border-left: 4px solid var(--gold); margin: 4px 0; }
@@ -81,7 +93,7 @@
     <div id="sp" class="screen" style="justify-content:center; align-items:center; text-align:center; padding: 20px;">
         <h2 id="pass-title" class="lm" style="font-size:32px;">WISSEL</h2>
         <p id="pass-sub" style="margin:20px 0; font-size: 18px;"></p>
-        <button class="btn btn-p1" onclick="showScreen('sg')">Ik ben er klaar voor</button>
+        <button class="btn btn-p1" onclick="showScreen('sg')">Start beurt</button>
     </div>
 
     <div id="sg" class="screen">
@@ -94,9 +106,9 @@
         <div class="gbody">
             <div class="sp-box">
                 <div id="spotify-player"></div>
+                <div id="c-block" class="cover-blocker"></div>
                 <div id="mask" class="sp-mask">
-                    <span style="font-family:'Bebas Neue'; color:var(--p1); letter-spacing:2px;">GEHEIM</span>
-                    <small style="color:var(--mut)">Raad het jaartal hieronder</small>
+                    <span style="font-family:'Bebas Neue'; color:var(--p1); letter-spacing:1px; font-size:14px;">DRUK PLAY ➡️</span>
                 </div>
             </div>
             <div id="active-tl" style="margin-top: 10px;"></div>
@@ -143,13 +155,12 @@
                 });
                 const d = await r.json();
                 const tid = d.tracks.items[0]?.id || "37i9dQZF1DXcBWIGoYBMm1";
-                // We gebruiken de standaard embed
                 document.getElementById('spotify-player').innerHTML = `<iframe src="https://open.spotify.com/embed/track/${tid}" allow="encrypted-media"></iframe>`;
-            } catch(e) {
-                console.error(e);
-            }
+            } catch(e) { console.error(e); }
 
             document.getElementById('mask').classList.remove('hidden');
+            document.getElementById('c-block').classList.remove('hidden');
+            
             const activeName = turn === 1 ? p1.name : p2.name;
             document.getElementById('pass-sub').innerText = `${activeName}, jouw beurt!`;
             document.getElementById('hturn').innerText = activeName;
@@ -185,6 +196,7 @@
             else if(pos > 0 && pos < sorted.length && y >= sorted[pos-1][2] && y <= sorted[pos][2]) win = true;
 
             document.getElementById('mask').classList.add('hidden');
+            document.getElementById('c-block').classList.add('hidden');
 
             setTimeout(() => {
                 if(win) {
