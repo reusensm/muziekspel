@@ -13,14 +13,11 @@
             --bg: #080810; --sur: #111118; --s2: #18181f; --s3: #222230;
             --p1: #ff2d55; --p2: #00c8f8; --gold: #ffc940; --gray: #333340;
             --txt: #f0f0f0; --mut: #666; --r: 14px;
-            --safe-top: env(safe-area-inset-top, 0px);
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; overflow: hidden; }
         body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', sans-serif; }
 
-        /* SCREENS */
         .screen { display: none; flex-direction: column; height: 100dvh; padding: env(safe-area-inset-top, 12px) 20px env(safe-area-inset-bottom, 20px); overflow-y: auto; }
         .screen.active { display: flex; }
 
@@ -29,7 +26,6 @@
         .bg-glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); pointer-events: none; opacity: 0.15; }
         .bg-glow.g1 { background: var(--p1); top: -100px; left: -100px; }
         .bg-glow.g2 { background: var(--p2); bottom: -100px; right: -100px; }
-        .logo-wrap { margin-bottom: 8px; }
         .logo { font-family: 'Bebas Neue'; font-size: 72px; letter-spacing: 4px; background: linear-gradient(135deg, var(--p1) 0%, var(--p2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
         .tagline { color: var(--mut); font-size: 13px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 48px; }
         .auth-card { background: var(--sur); border: 1px solid #222; border-radius: 20px; padding: 28px 24px; width: 100%; max-width: 340px; text-align: center; }
@@ -48,54 +44,65 @@
 
         /* === GAME SCREEN === */
         #gs { padding-top: max(env(safe-area-inset-top, 12px), 12px); gap: 0; }
+
         .hdr { display: flex; justify-content: space-between; align-items: stretch; gap: 8px; margin-bottom: 14px; flex-shrink: 0; }
         .score-pill { flex: 1; background: var(--sur); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid #222; }
         .score-name { font-size: 11px; color: var(--mut); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .score-num { font-family: 'Bebas Neue'; font-size: 36px; line-height: 1; }
+        .score-num { font-family: 'Bebas Neue'; font-size: 30px; line-height: 1; }
+        /* Challenge point dots */
+        .cp-row { display: flex; gap: 4px; justify-content: center; margin-top: 5px; }
+        .cp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); transition: all 0.2s; }
+        .cp-dot.empty { background: transparent; border: 1px solid #3a3a4a; }
+
         .turn-pill { background: var(--s2); border-radius: 12px; padding: 10px 14px; text-align: center; border: 1px solid #252532; flex-shrink: 0; }
         .turn-label { font-size: 9px; color: var(--mut); letter-spacing: 1px; text-transform: uppercase; }
         .turn-name { font-family: 'Bebas Neue'; font-size: 16px; white-space: nowrap; }
 
-        /* Player */
         .player-wrap { position: relative; height: 80px; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid #1a1a24; flex-shrink: 0; margin-bottom: 14px; }
         .player-mask-top { position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: #000; z-index: 5; display: flex; align-items: center; padding-left: 16px; pointer-events: none; }
         .player-mask-left { position: absolute; top: 0; left: 0; width: 73%; height: 100%; background: #000; z-index: 5; pointer-events: none; }
         .mask-label { font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 2px; color: #2a2a35; }
         .player-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        /* Timeline */
         .tl-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
         .tl-scroll::-webkit-scrollbar { display: none; }
         .tins { padding: 10px 16px; border: 2px dashed #2a2a38; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; font-size: 16px; letter-spacing: 1px; cursor: pointer; margin: 5px 0; transition: all 0.15s; background: transparent; }
-        .tins:active { background: rgba(255, 201, 64, 0.08); border-color: var(--gold); }
-        .tins.highlight { border-color: var(--gold); background: rgba(255, 201, 64, 0.06); }
+        .tins:active { background: rgba(255,201,64,0.08); border-color: var(--gold); }
+        .tins.locked { opacity: 0.35; cursor: default; pointer-events: none; }
         .tcard { background: var(--s2); padding: 11px 14px; border-radius: 10px; display: flex; align-items: center; gap: 12px; border-left: 3px solid var(--gold); margin: 3px 0; }
         .tyear { font-family: 'Bebas Neue'; font-size: 26px; color: var(--gold); min-width: 54px; }
         .tinfo strong { font-size: 14px; display: block; }
         .tinfo small { font-size: 11px; color: var(--mut); }
 
-        /* Challenge panel */
-        .challenge-panel { flex-shrink: 0; background: var(--sur); border-radius: 14px; border: 1px solid #252532; padding: 16px; text-align: center; margin-top: 8px; }
-        .challenge-q { font-size: 13px; color: var(--mut); margin-bottom: 14px; }
-        .challenge-q strong { color: var(--txt); display: block; font-family: 'Bebas Neue'; font-size: 18px; margin-bottom: 4px; }
+        /* Action panel */
+        .action-panel { flex-shrink: 0; background: var(--sur); border-radius: 14px; border: 1px solid #252532; padding: 16px; text-align: center; margin-top: 8px; }
+        .phase-badge { display: inline-block; font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 2px; padding: 4px 12px; border-radius: 50px; margin-bottom: 10px; background: rgba(255,201,64,0.1); color: var(--gold); border: 1px solid rgba(255,201,64,0.25); }
+        .panel-title { font-family: 'Bebas Neue'; font-size: 16px; letter-spacing: 1px; margin-bottom: 6px; }
+        .panel-sub { font-size: 12px; color: var(--mut); margin-bottom: 14px; line-height: 1.6; }
+        .panel-sub strong { color: var(--txt); }
+        .btn-correct { background: linear-gradient(135deg, #34c759, #00c8f8); color: #fff; font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 1px; padding: 14px; border: none; border-radius: 10px; width: 100%; cursor: pointer; margin-bottom: 8px; }
+        .btn-wrong-guess { background: var(--gray); color: var(--mut); font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 1px; padding: 12px; border: none; border-radius: 10px; width: 100%; cursor: pointer; }
         .btn-steal { background: linear-gradient(135deg, #ff9500, var(--p1)); color: #fff; font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 1px; padding: 14px; border: none; border-radius: 10px; width: 100%; cursor: pointer; margin-bottom: 8px; }
-        .btn-pass { background: var(--gray); color: var(--mut); font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 1px; padding: 12px; border: none; border-radius: 10px; width: 100%; cursor: pointer; }
+        .btn-steal:disabled { background: #222; color: #444; cursor: not-allowed; }
+        .btn-pass { background: var(--gray); color: var(--mut); font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 1px; padding: 12px; border: none; border-radius: 10px; width: 100%; cursor: pointer; margin-top: 8px; }
+        .cp-cost-note { font-size: 11px; color: #ff9500; margin-top: 6px; }
+        .cp-warning { font-size: 11px; color: var(--p1); margin-top: 6px; }
 
-        /* === MODAL === */
+        /* Modal */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
         .modal.open { display: flex; }
-        .modal-card { background: var(--sur); border-radius: 20px; padding: 32px 24px; text-align: center; width: 100%; max-width: 340px; border: 1px solid #222; animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .modal-card { background: var(--sur); border-radius: 20px; padding: 32px 24px; text-align: center; width: 100%; max-width: 340px; border: 1px solid #222; animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1); }
         @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .result-badge { display: inline-block; font-family: 'Bebas Neue'; font-size: 13px; letter-spacing: 2px; padding: 6px 16px; border-radius: 50px; margin-bottom: 16px; }
-        .result-badge.correct { background: rgba(52, 199, 89, 0.15); color: #34c759; border: 1px solid rgba(52, 199, 89, 0.3); }
-        .result-badge.stolen { background: rgba(255, 149, 0, 0.15); color: #ff9500; border: 1px solid rgba(255, 149, 0, 0.3); }
-        .result-badge.wrong { background: rgba(255, 45, 85, 0.15); color: var(--p1); border: 1px solid rgba(255, 45, 85, 0.3); }
+        .result-badge.correct { background: rgba(52,199,89,0.15); color: #34c759; border: 1px solid rgba(52,199,89,0.3); }
+        .result-badge.stolen { background: rgba(255,149,0,0.15); color: #ff9500; border: 1px solid rgba(255,149,0,0.3); }
+        .result-badge.wrong { background: rgba(255,45,85,0.15); color: var(--p1); border: 1px solid rgba(255,45,85,0.3); }
         .result-year { font-family: 'Bebas Neue'; font-size: 56px; line-height: 1; color: var(--gold); margin-bottom: 4px; }
         .result-song { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-        .result-artist { font-size: 14px; color: var(--mut); margin-bottom: 24px; }
+        .result-artist { font-size: 14px; color: var(--mut); margin-bottom: 10px; }
+        .result-bonus { font-size: 12px; color: var(--p2); min-height: 18px; margin-bottom: 20px; font-weight: 500; }
         .btn-next { background: linear-gradient(135deg, var(--p1), var(--p2)); color: #fff; font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 1px; padding: 16px; border: none; border-radius: 12px; width: 100%; cursor: pointer; }
 
-        /* Searching overlay */
         .searching { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 150; flex-direction: column; gap: 12px; }
         .searching.open { display: flex; }
         .searching p { color: var(--mut); font-size: 13px; }
@@ -107,7 +114,7 @@
 <div id="ss" class="screen active">
     <div class="bg-glow g1"></div>
     <div class="bg-glow g2"></div>
-    <div class="logo-wrap"><div class="logo">MUZIEKSPEL</div></div>
+    <div class="logo">MUZIEKSPEL</div>
     <div class="tagline">Raad het jaar · Steel de beurt</div>
 
     <div id="load-status" style="text-align:center">
@@ -145,6 +152,7 @@
         <div class="score-pill">
             <div class="score-name" id="hp1n">P1</div>
             <div class="score-num" style="color:var(--p1)" id="hp1s">0</div>
+            <div class="cp-row" id="cp1-dots"></div>
         </div>
         <div class="turn-pill">
             <div class="turn-label">Beurt</div>
@@ -153,6 +161,7 @@
         <div class="score-pill">
             <div class="score-name" id="hp2n">P2</div>
             <div class="score-num" style="color:var(--p2)" id="hp2s">0</div>
+            <div class="cp-row" id="cp2-dots"></div>
         </div>
     </div>
 
@@ -166,14 +175,7 @@
         <div id="active-tl"></div>
     </div>
 
-    <div id="challenge-panel" class="challenge-panel" style="display:none">
-        <div class="challenge-q">
-            <strong id="opp-name">Tegenstander</strong>
-            Wil jij stelen? Kies de juiste positie in jouw tijdlijn.
-        </div>
-        <button class="btn-steal" onclick="activateStealing()">JA, IK STEEL! 🔥</button>
-        <button class="btn-pass" onclick="resolveRound(false, null)">PASSEN</button>
-    </div>
+    <div id="action-panel" class="action-panel" style="display:none"></div>
 </div>
 
 <!-- RESULT MODAL -->
@@ -183,6 +185,7 @@
         <div class="result-year" id="rm-year"></div>
         <div class="result-song" id="rm-song"></div>
         <div class="result-artist" id="rm-artist"></div>
+        <div class="result-bonus" id="rm-bonus"></div>
         <button class="btn-next" onclick="closeModal()">VOLGENDE RONDE ›</button>
     </div>
 </div>
@@ -194,17 +197,8 @@
 </div>
 
 <script>
-// ==========================================
-// CONFIG — only Client ID needed, no secret!
-// ==========================================
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
-
-// IMPORTANT: Set this to wherever you host this file.
-// For GitHub Pages it's typically: https://USERNAME.github.io/REPONAME/
-// For local testing on your phone via a local server: http://YOUR-IP:PORT/
-// You can also use https://muziekspel.netlify.app if you still use that
 const REDIRECT_URI = window.location.origin + window.location.pathname;
-
 const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
 
 // ==========================================
@@ -213,20 +207,22 @@ const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/s
 let ALL_SONGS = [], RAW_SONGS = [];
 let SP_TOKEN = '';
 let turn = 1;
-let p1 = { name: "", score: 0, timeline: [] };
-let p2 = { name: "", score: 0, timeline: [] };
+let p1 = { name: "", score: 0, timeline: [], cp: 2 };
+let p2 = { name: "", score: 0, timeline: [], cp: 2 };
 let currentSong = null;
 let pGuess = -1;
-let isStealMode = false;
-let stealerPlayer = null; // p1 or p2
+let stealerPlayer = null;
+let titleGuessedCorrect = false;
+
+// Phases: 'title' | 'place' | 'steal' | 'steal-place'
+let phase = 'title';
 
 // ==========================================
-// PKCE HELPERS
+// PKCE
 // ==========================================
 function generateCodeVerifier(len = 64) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-    let v = '';
-    const arr = new Uint8Array(len);
+    let v = ''; const arr = new Uint8Array(len);
     crypto.getRandomValues(arr);
     arr.forEach(b => v += chars[b % chars.length]);
     return v;
@@ -235,7 +231,7 @@ async function generateCodeChallenge(verifier) {
     const data = new TextEncoder().encode(verifier);
     const digest = await crypto.subtle.digest('SHA-256', data);
     return btoa(String.fromCharCode(...new Uint8Array(digest)))
-        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
 }
 
 // ==========================================
@@ -246,154 +242,98 @@ async function loginWithSpotify() {
     const challenge = await generateCodeChallenge(verifier);
     sessionStorage.setItem('pkce_verifier', verifier);
     const params = new URLSearchParams({
-        client_id: CLIENT_ID,
-        response_type: 'code',
-        redirect_uri: REDIRECT_URI,
+        client_id: CLIENT_ID, response_type: 'code', redirect_uri: REDIRECT_URI,
         scope: 'streaming user-read-private user-read-email user-read-playback-state',
-        code_challenge_method: 'S256',
-        code_challenge: challenge,
-        show_dialog: 'true'
+        code_challenge_method: 'S256', code_challenge: challenge, show_dialog: 'true'
     });
     window.location.href = 'https://accounts.spotify.com/authorize?' + params.toString();
 }
-
 async function exchangeCode(code) {
     const verifier = sessionStorage.getItem('pkce_verifier');
-    const body = new URLSearchParams({
-        grant_type: 'authorization_code',
-        code,
-        redirect_uri: REDIRECT_URI,
-        client_id: CLIENT_ID,
-        code_verifier: verifier
-    });
-    const res = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
-    });
-    const data = await res.json();
-    return data.access_token;
+    const body = new URLSearchParams({ grant_type: 'authorization_code', code, redirect_uri: REDIRECT_URI, client_id: CLIENT_ID, code_verifier: verifier });
+    const res = await fetch('https://accounts.spotify.com/api/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+    return (await res.json()).access_token;
 }
 
 // ==========================================
-// SONG SEARCH
+// SPOTIFY SEARCH
 // ==========================================
 async function findSpotifyTrack(song) {
     const q = encodeURIComponent(`${song[1]} ${song[0]}`);
     try {
-        const r = await fetch(
-            `https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`,
-            { headers: { 'Authorization': `Bearer ${SP_TOKEN}` } }
-        );
+        const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`, { headers: { 'Authorization': `Bearer ${SP_TOKEN}` } });
         const d = await r.json();
         const items = d.tracks?.items || [];
-        // Try to find a track matching the year
         const year = song[2];
-        const byYear = items.find(t => {
-            const y = parseInt(t.album?.release_date?.substring(0, 4));
-            return Math.abs(y - year) <= 2;
-        });
+        const byYear = items.find(t => Math.abs(parseInt(t.album?.release_date?.substring(0, 4)) - year) <= 2);
         return (byYear || items[0])?.id || null;
-    } catch (e) {
-        console.error('Spotify search error', e);
-        return null;
-    }
+    } catch { return null; }
 }
 
 // ==========================================
 // INIT
 // ==========================================
 async function init() {
-    // Handle callback
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-
-    // Load songs in background
     loadSongs();
-
     if (code) {
         try {
             SP_TOKEN = await exchangeCode(code);
             sessionStorage.removeItem('pkce_verifier');
             window.history.replaceState({}, document.title, window.location.pathname);
             showSetup();
-        } catch (e) {
-            console.error('Token exchange failed', e);
-            showAuth();
-        }
-    } else {
-        showAuth();
-    }
+        } catch { showAuth(); }
+    } else { showAuth(); }
 }
 
 async function loadSongs() {
     try {
         const res = await fetch(GITHUB_URL);
         ALL_SONGS = await res.json();
-        RAW_SONGS = [...ALL_SONGS];
-        const el = document.getElementById('songs-count');
-        if (el) el.textContent = `${ALL_SONGS.length} nummers geladen`;
-    } catch (e) {
-        // Fallback demo songs if GitHub fetch fails
+    } catch {
         ALL_SONGS = [
             ["Bohemian Rhapsody","Queen",1975],["Billie Jean","Michael Jackson",1982],
             ["Like a Rolling Stone","Bob Dylan",1965],["Smells Like Teen Spirit","Nirvana",1991],
             ["Hey Jude","The Beatles",1968],["Purple Rain","Prince",1984],
             ["Born to Run","Bruce Springsteen",1975],["Wonderwall","Oasis",1995],
-            ["Losing My Religion","R.E.M.",1991],["Hotel California","Eagles",1977],
-            ["Mr. Brightside","The Killers",2003],["Seven Nation Army","The White Stripes",2003],
-            ["Creep","Radiohead",1992],["One More Time","Daft Punk",2000],
-            ["Superstition","Stevie Wonder",1972],["Sweet Child O Mine","Guns N Roses",1987],
-            ["Africa","Toto",1982],["Don't Stop Believin","Journey",1981],
-            ["Roxanne","The Police",1978],["Take On Me","A-ha",1985],
-            ["Under Pressure","Queen",1981],["Every Breath You Take","The Police",1983],
-            ["Jolene","Dolly Parton",1973],["Dancing Queen","ABBA",1976],
-            ["Blue (Da Ba Dee)","Eiffel 65",1998],["Losing It","FISHER",2018],
+            ["Hotel California","Eagles",1977],["Mr. Brightside","The Killers",2003],
+            ["Seven Nation Army","The White Stripes",2003],["Creep","Radiohead",1992],
+            ["One More Time","Daft Punk",2000],["Sweet Child O Mine","Guns N Roses",1987],
+            ["Africa","Toto",1982],["Take On Me","A-ha",1985],["Dancing Queen","ABBA",1976],
             ["Bad Guy","Billie Eilish",2019],["Shape of You","Ed Sheeran",2017],
-            ["Blinding Lights","The Weeknd",2019],["Levitating","Dua Lipa",2020],
-            ["Stay With Me","Sam Smith",2014],["Rolling in the Deep","Adele",2010],
-            ["Happy","Pharrell Williams",2013],["Uptown Funk","Mark Ronson",2014],
-            ["Stressed Out","Twenty One Pilots",2015],["Shake It Off","Taylor Swift",2014],
-            ["Counting Stars","OneRepublic",2013],["Get Lucky","Daft Punk",2013],
-            ["Call Me Maybe","Carly Rae Jepsen",2012],["Somebody That I Used to Know","Gotye",2011]
+            ["Blinding Lights","The Weeknd",2019],["Rolling in the Deep","Adele",2010],
+            ["Uptown Funk","Mark Ronson",2014],["Shake It Off","Taylor Swift",2014],
+            ["Get Lucky","Daft Punk",2013],["Somebody That I Used to Know","Gotye",2011]
         ];
-        RAW_SONGS = [...ALL_SONGS];
-        const el = document.getElementById('songs-count');
-        if (el) el.textContent = `${ALL_SONGS.length} demo-nummers geladen`;
     }
+    RAW_SONGS = [...ALL_SONGS];
+    const el = document.getElementById('songs-count');
+    if (el) el.textContent = `${ALL_SONGS.length} nummers geladen`;
 }
 
 function showAuth() {
     document.getElementById('load-status').style.display = 'none';
     document.getElementById('auth-section').style.display = 'block';
 }
-
 function showSetup() {
     document.getElementById('load-status').style.display = 'none';
     document.getElementById('auth-section').style.display = 'none';
     document.getElementById('setup-form').style.display = 'flex';
-    const el = document.getElementById('songs-count');
-    if (el) el.textContent = ALL_SONGS.length ? `${ALL_SONGS.length} nummers geladen` : '';
 }
 
 // ==========================================
-// GAME
+// GAME FLOW
 // ==========================================
 function startGame() {
-    if (!ALL_SONGS.length) {
-        alert('Nummers nog niet geladen, even wachten...');
-        return;
-    }
+    if (!ALL_SONGS.length) { alert('Nummers nog niet geladen...'); return; }
     p1.name = document.getElementById('p1n').value.trim() || 'Speler 1';
     p2.name = document.getElementById('p2n').value.trim() || 'Speler 2';
-    p1.score = 0; p1.timeline = [];
-    p2.score = 0; p2.timeline = [];
+    p1.score = 0; p1.timeline = []; p1.cp = 2;
+    p2.score = 0; p2.timeline = []; p2.cp = 2;
     RAW_SONGS = [...ALL_SONGS];
-
-    // Give each player a starter card
     p1.timeline.push(RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0]);
     p2.timeline.push(RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0]);
-
     turn = 1;
     nextRound();
 }
@@ -401,97 +341,165 @@ function startGame() {
 async function nextRound() {
     if (!RAW_SONGS.length) RAW_SONGS = [...ALL_SONGS];
     currentSong = RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0];
-    isStealMode = false;
     stealerPlayer = null;
     pGuess = -1;
+    titleGuessedCorrect = false;
+    phase = 'title';
 
-    // Update header
+    updateHeader();
+    document.getElementById('action-panel').style.display = 'none';
+
+    document.getElementById('searching').classList.add('open');
+    const tid = await findSpotifyTrack(currentSong);
+    document.getElementById('searching').classList.remove('open');
+
+    document.getElementById('spotify-wrapper').innerHTML = tid
+        ? `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
+        : `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#444;font-size:12px">Nummer niet gevonden op Spotify</div>`;
+
+    renderTimeline();
+    showTitlePhase();
+    showScreen('gs');
+}
+
+function updateHeader() {
     const curP = turn === 1 ? p1 : p2;
     document.getElementById('hturn').textContent = curP.name;
     document.getElementById('hp1n').textContent = p1.name;
     document.getElementById('hp2n').textContent = p2.name;
     document.getElementById('hp1s').textContent = p1.score;
     document.getElementById('hp2s').textContent = p2.score;
-
-    document.getElementById('challenge-panel').style.display = 'none';
-
-    // Search Spotify
-    document.getElementById('searching').classList.add('open');
-    const tid = await findSpotifyTrack(currentSong);
-    document.getElementById('searching').classList.remove('open');
-
-    if (tid) {
-        document.getElementById('spotify-wrapper').innerHTML =
-            `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
-    } else {
-        document.getElementById('spotify-wrapper').innerHTML =
-            `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#444;font-size:12px">Nummer niet gevonden op Spotify</div>`;
-    }
-
-    renderTimeline();
-    showScreen('gs');
+    renderCpDots('cp1-dots', p1.cp);
+    renderCpDots('cp2-dots', p2.cp);
 }
 
+function renderCpDots(elId, cp) {
+    const el = document.getElementById(elId);
+    // Show max(cp, 2) slots so you always see at least 2
+    const slots = Math.max(cp, 2);
+    el.innerHTML = Array.from({length: slots}, (_, i) =>
+        `<div class="cp-dot ${i < cp ? '' : 'empty'}"></div>`
+    ).join('');
+}
+
+// ==========================================
+// PHASE 1: TITLE GUESS
+// ==========================================
+function showTitlePhase() {
+    const curP = turn === 1 ? p1 : p2;
+    const panel = document.getElementById('action-panel');
+    panel.style.display = 'block';
+    panel.innerHTML = `
+        <div class="phase-badge">🎤 STAP 1 — TITEL & ARTIEST</div>
+        <div class="panel-title">${curP.name}, raad hardop!</div>
+        <div class="panel-sub">Wat is de <strong>titel</strong> en <strong>artiest</strong> van dit nummer?<br><small style="color:#3a3a4a">Correct = +1 challengepunt 🏅</small></div>
+        <button class="btn-correct" onclick="onTitleResult(true)">✓ CORRECT GERADEN</button>
+        <button class="btn-wrong-guess" onclick="onTitleResult(false)">✗ NIET GERADEN</button>
+    `;
+}
+
+function onTitleResult(correct) {
+    titleGuessedCorrect = correct;
+    phase = 'place';
+    const panel = document.getElementById('action-panel');
+    const curP = turn === 1 ? p1 : p2;
+    panel.innerHTML = `
+        <div class="phase-badge">📅 STAP 2 — TIJDLIJN</div>
+        <div class="panel-sub"><strong>${curP.name}</strong>, tik op de juiste plek in jouw tijdlijn.</div>
+    `;
+    renderTimeline();
+}
+
+// ==========================================
+// PHASE 2: TIMELINE PLACEMENT
+// ==========================================
 function renderTimeline() {
     const tl = document.getElementById('active-tl');
-    const curP = (isStealMode ? stealerPlayer : (turn === 1 ? p1 : p2));
-    const sorted = [...curP.timeline].sort((a, b) => a[2] - b[2]);
+    const clickable = (phase === 'place' || phase === 'steal-place');
+    const usePlayer = phase === 'steal-place' ? stealerPlayer : (turn === 1 ? p1 : p2);
+    const sorted = [...usePlayer.timeline].sort((a, b) => a[2] - b[2]);
 
-    let h = `<div class="tins" data-pos="0" onclick="handlePick(0)">⬇️ VOOR ${sorted[0][2]}</div>`;
+    const slot = (pos, label) =>
+        `<div class="tins ${clickable ? '' : 'locked'}" ${clickable ? `onclick="handlePick(${pos})"` : ''}>${label}</div>`;
+
+    let h = slot(0, `⬇️ VOOR ${sorted[0][2]}`);
     sorted.forEach((s, i) => {
         h += `<div class="tcard">
             <span class="tyear">${s[2]}</span>
             <div class="tinfo"><strong>${s[0]}</strong><small>${s[1]}</small></div>
         </div>`;
         if (i < sorted.length - 1) {
-            const midLabel = sorted[i][2] + '–' + sorted[i+1][2];
-            h += `<div class="tins" onclick="handlePick(${i + 1})">↕️ ${midLabel}</div>`;
+            h += slot(i + 1, `↕️ ${sorted[i][2]}–${sorted[i+1][2]}`);
         }
     });
-    h += `<div class="tins" onclick="handlePick(${sorted.length})">⬆️ NA ${sorted[sorted.length-1][2]}</div>`;
+    h += slot(sorted.length, `⬆️ NA ${sorted[sorted.length-1][2]}`);
     tl.innerHTML = h;
 }
 
 function handlePick(pos) {
-    if (!isStealMode) {
-        // Original player made their guess
+    if (phase === 'place') {
         pGuess = pos;
-        // Show steal challenge to opponent
-        const opp = turn === 1 ? p2 : p1;
-        document.getElementById('opp-name').textContent = opp.name + ':';
-        document.getElementById('challenge-panel').style.display = 'block';
-        // Scroll down to show it
-        document.querySelector('.tl-scroll').scrollTop = 9999;
-    } else {
-        // Steal attempt
+        showStealPhase();
+    } else if (phase === 'steal-place') {
         resolveRound(true, pos);
     }
 }
 
-function activateStealing() {
-    isStealMode = true;
-    stealerPlayer = turn === 1 ? p2 : p1;
-    document.getElementById('challenge-panel').style.display = 'none';
-    renderTimeline(); // Re-render with opponent's timeline
+// ==========================================
+// PHASE 3: STEAL OFFER
+// ==========================================
+function showStealPhase() {
+    phase = 'steal';
+    const opp = turn === 1 ? p2 : p1;
+    const canSteal = opp.cp > 0;
+    const panel = document.getElementById('action-panel');
+    panel.innerHTML = `
+        <div class="phase-badge">🔥 STAP 3 — CHALLENGE</div>
+        <div class="panel-title">${opp.name}: wil jij stelen?</div>
+        <div class="panel-sub">Je hebt <strong>${opp.cp} challengepunt${opp.cp !== 1 ? 'en' : ''}</strong>. Stelen kost altijd 1 punt — ook als je fout zit.</div>
+        <button class="btn-steal" ${canSteal ? '' : 'disabled'} onclick="activateStealing()">🔥 JA, IK STEEL! (−1 punt)</button>
+        ${canSteal
+            ? `<p class="cp-cost-note">1 punt wordt direct afgetrokken.</p>`
+            : `<p class="cp-warning">Geen challengepunten meer!</p>`}
+        <button class="btn-pass" onclick="resolveRound(false, null)">PASSEN</button>
+    `;
+    renderTimeline(); // lock the slots
 }
 
+function activateStealing() {
+    stealerPlayer = turn === 1 ? p2 : p1;
+    stealerPlayer.cp = Math.max(0, stealerPlayer.cp - 1);
+    updateHeader();
+    phase = 'steal-place';
+    const panel = document.getElementById('action-panel');
+    panel.innerHTML = `
+        <div class="phase-badge">🔥 STEEL-MODUS</div>
+        <div class="panel-sub"><strong>${stealerPlayer.name}</strong>, tik op de juiste plek in <em>jouw</em> tijdlijn.</div>
+    `;
+    renderTimeline();
+    document.querySelector('.tl-scroll').scrollTop = 0;
+}
+
+// ==========================================
+// RESOLVE
+// ==========================================
 function isCorrectPlacement(timeline, pos, year) {
     const sorted = [...timeline].sort((a, b) => a[2] - b[2]);
     if (pos === 0) return year <= sorted[0][2];
-    if (pos === sorted.length) return year >= sorted[sorted.length - 1][2];
-    return year >= sorted[pos - 1][2] && year <= sorted[pos][2];
+    if (pos === sorted.length) return year >= sorted[sorted.length-1][2];
+    return year >= sorted[pos-1][2] && year <= sorted[pos][2];
 }
 
 function resolveRound(stealAttempted, stealPos) {
     const curP = turn === 1 ? p1 : p2;
-    const opp = turn === 1 ? p2 : p1;
-    const year = currentSong[2];
+    const opp   = turn === 1 ? p2 : p1;
+    const year  = currentSong[2];
 
     const originalCorrect = isCorrectPlacement(curP.timeline, pGuess, year);
-    const stealCorrect = stealAttempted && stealPos !== null &&
-        isCorrectPlacement(opp.timeline, stealPos, year);
+    const stealCorrect    = stealAttempted && stealPos !== null
+                            && isCorrectPlacement(opp.timeline, stealPos, year);
 
-    let resultType, badge;
+    let resultType, badge, bonusMsg = '';
     document.getElementById('spotify-wrapper').innerHTML = '';
 
     if (originalCorrect) {
@@ -499,6 +507,10 @@ function resolveRound(stealAttempted, stealPos) {
         curP.timeline.push(currentSong);
         resultType = 'correct';
         badge = '✓ CORRECT!';
+        if (titleGuessedCorrect) {
+            curP.cp++;
+            bonusMsg = `🏅 +1 challengepunt voor ${curP.name}!`;
+        }
     } else if (stealCorrect) {
         opp.score++;
         opp.timeline.push(currentSong);
@@ -509,14 +521,14 @@ function resolveRound(stealAttempted, stealPos) {
         badge = '✗ FOUT!';
     }
 
-    const badgeEl = document.getElementById('result-badge');
-    badgeEl.textContent = badge;
-    badgeEl.className = 'result-badge ' + resultType;
-
+    document.getElementById('result-badge').textContent = badge;
+    document.getElementById('result-badge').className = 'result-badge ' + resultType;
     document.getElementById('rm-year').textContent = year;
     document.getElementById('rm-song').textContent = currentSong[0];
     document.getElementById('rm-artist').textContent = currentSong[1];
+    document.getElementById('rm-bonus').textContent = bonusMsg;
     document.getElementById('result-modal').classList.add('open');
+    updateHeader();
 }
 
 function closeModal() {
@@ -530,9 +542,6 @@ function showScreen(id) {
     document.getElementById(id).classList.add('active');
 }
 
-// ==========================================
-// START
-// ==========================================
 init();
 </script>
 </body>
