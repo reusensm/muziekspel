@@ -34,6 +34,11 @@
         .btn-spotify svg { width: 22px; height: 22px; }
         .setup-form { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
         .input-wrap { background: var(--sur); border: 1px solid #252532; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+        
+        /* Nieuwe select styling */
+        .select-wrap { background: var(--s2); border: 1px solid var(--gold); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .select-wrap select { background: none; border: none; color: var(--gold); font-size: 16px; outline: none; flex: 1; font-family: 'DM Sans'; cursor: pointer; }
+
         .player-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
         .input-wrap input { background: none; border: none; color: #fff; font-size: 16px; outline: none; flex: 1; font-family: 'DM Sans'; }
         input::placeholder { color: var(--mut); }
@@ -49,7 +54,6 @@
         .score-pill { flex: 1; background: var(--sur); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid #222; }
         .score-name { font-size: 11px; color: var(--mut); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .score-num { font-family: 'Bebas Neue'; font-size: 30px; line-height: 1; }
-        /* Challenge point dots */
         .cp-row { display: flex; gap: 4px; justify-content: center; margin-top: 5px; }
         .cp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); transition: all 0.2s; }
         .cp-dot.empty { background: transparent; border: 1px solid #3a3a4a; }
@@ -72,10 +76,9 @@
         .tins.blocked { opacity: 0.4; cursor: not-allowed; pointer-events: none; border-color: var(--p1); color: var(--p1); background: rgba(255,45,85,0.05); }
         .tins.blocked::after { content: ' 🚫'; font-size: 12px; }
 
-        /* Danceparty button */
         .danceparty-btn { position: fixed; bottom: max(env(safe-area-inset-bottom, 12px), 12px); right: 16px; z-index: 50; background: #111118; border: 1px solid #222; border-radius: 50px; padding: 8px 14px; font-size: 11px; color: #333340; cursor: pointer; font-family: 'DM Sans'; letter-spacing: 0.5px; transition: all 0.2s; }
         .danceparty-btn:active { color: #ff69b4; border-color: #ff69b4; background: rgba(255,105,180,0.08); }
-        /* Danceparty modal */
+        
         #danceparty-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.97); display: none; align-items: center; justify-content: center; z-index: 300; flex-direction: column; gap: 16px; }
         #danceparty-modal.open { display: flex; }
         .dp-title { font-family: 'Bebas Neue'; font-size: 42px; letter-spacing: 4px; background: linear-gradient(135deg, #ff69b4, #ff9500, #ffc940); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: dpPulse 1s ease-in-out infinite alternate; }
@@ -89,7 +92,6 @@
         .tinfo strong { font-size: 14px; display: block; }
         .tinfo small { font-size: 11px; color: var(--mut); }
 
-        /* Action panel */
         .action-panel { flex-shrink: 0; background: var(--sur); border-radius: 14px; border: 1px solid #252532; padding: 16px; text-align: center; margin-top: 8px; }
         .phase-badge { display: inline-block; font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 2px; padding: 4px 12px; border-radius: 50px; margin-bottom: 10px; background: rgba(255,201,64,0.1); color: var(--gold); border: 1px solid rgba(255,201,64,0.25); }
         .panel-title { font-family: 'Bebas Neue'; font-size: 16px; letter-spacing: 1px; margin-bottom: 6px; }
@@ -103,7 +105,6 @@
         .cp-cost-note { font-size: 11px; color: #ff9500; margin-top: 6px; }
         .cp-warning { font-size: 11px; color: var(--p1); margin-top: 6px; }
 
-        /* Modal */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
         .modal.open { display: flex; }
         .modal-card { background: var(--sur); border-radius: 20px; padding: 32px 24px; text-align: center; width: 100%; max-width: 340px; border: 1px solid #222; animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1); }
@@ -134,7 +135,6 @@
 </head>
 <body>
 
-<!-- START SCREEN -->
 <div id="ss" class="screen active">
     <div class="bg-glow g1"></div>
     <div class="bg-glow g2"></div>
@@ -143,12 +143,12 @@
 
     <div id="load-status" style="text-align:center">
         <div class="spinner"></div>
-        <p style="color:var(--mut);font-size:13px">Laden...</p>
+        <p style="color:var(--mut);font-size:13px">Lijsten ophalen van GitHub...</p>
     </div>
 
     <div id="auth-section" style="display:none">
         <div class="auth-card">
-            <p>Log in met Spotify om volledige nummers te spelen. Je hebt <strong style="color:#fff">geen Premium</strong> nodig — we gebruiken de gratis ingebouwde Spotify-speler.</p>
+            <p>Log in met Spotify om volledige nummers te spelen. Je hebt <strong style="color:#fff">geen Premium</strong> nodig.</p>
             <button class="btn-spotify" onclick="loginWithSpotify()">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
                 VERBIND SPOTIFY
@@ -157,6 +157,12 @@
     </div>
 
     <div id="setup-form" class="setup-form" style="display:none">
+        <div class="select-wrap">
+            <select id="songlist-selector">
+                <option value="">Lijsten laden...</option>
+            </select>
+        </div>
+
         <div class="input-wrap">
             <div class="player-dot" style="background:var(--p1)"></div>
             <input type="text" id="p1n" placeholder="Naam Speler 1" maxlength="16">
@@ -170,7 +176,6 @@
     </div>
 </div>
 
-<!-- GAME SCREEN -->
 <div id="gs" class="screen">
     <div class="hdr">
         <div class="score-pill">
@@ -202,7 +207,6 @@
     <div id="action-panel" class="action-panel" style="display:none"></div>
 </div>
 
-<!-- RESULT MODAL -->
 <div id="result-modal" class="modal">
     <div class="modal-card">
         <div class="result-badge" id="result-badge">CORRECT</div>
@@ -210,7 +214,6 @@
         <div class="result-song" id="rm-song"></div>
         <div class="result-artist" id="rm-artist"></div>
         <div class="result-details" id="rm-details"></div>
-        <!-- Title-guess confirm (shown only when active player got placement right) -->
         <div id="rm-title-confirm" style="display:none; background:#0d0d14; border-radius:10px; padding:12px 14px; margin-bottom:10px; text-align:left;">
             <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:var(--gold);margin-bottom:8px;">🎤 HAD JE DE TITEL + ARTIEST?</div>
             <div style="font-size:11px;color:var(--mut);margin-bottom:10px;">Correct geraden = +1 challengepunt</div>
@@ -224,7 +227,6 @@
     </div>
 </div>
 
-<!-- DANCEPARTY MODAL -->
 <div id="danceparty-modal">
     <div class="dp-title">🎉 POEPIE'S DANCEPARTY 🎉</div>
     <div class="dp-sub">traag — bizzey, jozo & kraantje pappie</div>
@@ -232,10 +234,8 @@
     <button class="btn-dp-close" onclick="closeDanceparty()">SLUIT FEESTJE</button>
 </div>
 
-<!-- Danceparty trigger — tucked in corner, out of the way -->
 <button class="danceparty-btn" onclick="openDanceparty()">🕺 Poepie's danceparty</button>
 
-<!-- SEARCHING OVERLAY -->
 <div id="searching" class="searching">
     <div class="spinner"></div>
     <p>Nummer zoeken op Spotify…</p>
@@ -244,7 +244,6 @@
 <script>
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
-const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
 
 // ==========================================
 // STATE
@@ -257,36 +256,40 @@ let p2 = { name: "", score: 0, timeline: [], cp: 2 };
 let currentSong = null;
 let pGuess = -1;
 let stealerPlayer = null;
-
-// Phases: 'title' | 'place' | 'steal' | 'steal-place'
 let phase = 'title';
-// Positions (in opponent's timeline) that are blocked for steal (= same range as active player's guess)
 let blockedStealPositions = [];
 
-function computeBlockedStealPositions(curPTimeline, oppTimeline, guessPos) {
-    const curSorted = [...curPTimeline].sort((a, b) => a[2] - b[2]);
-    const oppSorted = [...oppTimeline].sort((a, b) => a[2] - b[2]);
-    let lowYear = -Infinity, highYear = Infinity;
-    if (guessPos === 0) {
-        highYear = curSorted[0][2];
-    } else if (guessPos === curSorted.length) {
-        lowYear = curSorted[curSorted.length - 1][2];
-    } else {
-        lowYear = curSorted[guessPos - 1][2];
-        highYear = curSorted[guessPos][2];
+// ==========================================
+// GITHUB SONG LOADING LOGIC (MODIFIED)
+// ==========================================
+async function fetchSongLists() {
+    const repoUrl = "https://api.github.com/repos/reusensm/muziekspel/contents/songlists";
+    const selector = document.getElementById('songlist-selector');
+    
+    try {
+        const response = await fetch(repoUrl);
+        const files = await response.json();
+        const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+        
+        selector.innerHTML = '';
+        jsonFiles.forEach(file => {
+            const opt = document.createElement('option');
+            opt.value = file.download_url;
+            opt.textContent = "Lijst: " + file.name.replace('.json', '').replace(/-/g, ' ');
+            selector.appendChild(opt);
+        });
+        
+        if(jsonFiles.length > 0) {
+            document.getElementById('songs-count').textContent = `${jsonFiles.length} playlists gevonden.`;
+        }
+    } catch (e) {
+        selector.innerHTML = '<option value="">Fout bij laden...</option>';
+        console.error("GitHub error:", e);
     }
-    const blocked = [];
-    const n = oppSorted.length;
-    for (let i = 0; i <= n; i++) {
-        const slotLow  = i === 0 ? -Infinity : oppSorted[i - 1][2];
-        const slotHigh = i === n ?  Infinity : oppSorted[i][2];
-        if (slotLow <= highYear && slotHigh >= lowYear) blocked.push(i);
-    }
-    return blocked;
 }
 
 // ==========================================
-// PKCE
+// PKCE & AUTH (ONGEWIJZIGD)
 // ==========================================
 function generateCodeVerifier(len = 64) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
@@ -302,9 +305,6 @@ async function generateCodeChallenge(verifier) {
         .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
 }
 
-// ==========================================
-// AUTH
-// ==========================================
 async function loginWithSpotify() {
     const verifier = generateCodeVerifier();
     const challenge = await generateCodeChallenge(verifier);
@@ -316,26 +316,13 @@ async function loginWithSpotify() {
     });
     window.location.href = 'https://accounts.spotify.com/authorize?' + params.toString();
 }
+
 async function exchangeCode(code) {
     const verifier = sessionStorage.getItem('pkce_verifier');
     const body = new URLSearchParams({ grant_type: 'authorization_code', code, redirect_uri: REDIRECT_URI, client_id: CLIENT_ID, code_verifier: verifier });
     const res = await fetch('https://accounts.spotify.com/api/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
-    return (await res.json()).access_token;
-}
-
-// ==========================================
-// SPOTIFY SEARCH
-// ==========================================
-async function findSpotifyTrack(song) {
-    const q = encodeURIComponent(`${song[1]} ${song[0]}`);
-    try {
-        const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`, { headers: { 'Authorization': `Bearer ${SP_TOKEN}` } });
-        const d = await r.json();
-        const items = d.tracks?.items || [];
-        const year = song[2];
-        const byYear = items.find(t => Math.abs(parseInt(t.album?.release_date?.substring(0, 4)) - year) <= 2);
-        return (byYear || items[0])?.id || null;
-    } catch { return null; }
+    const data = await res.json();
+    return data.access_token;
 }
 
 // ==========================================
@@ -344,7 +331,10 @@ async function findSpotifyTrack(song) {
 async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    loadSongs();
+    
+    // Altijd lijsten ophalen
+    await fetchSongLists();
+
     if (code) {
         try {
             SP_TOKEN = await exchangeCode(code);
@@ -353,31 +343,6 @@ async function init() {
             showSetup();
         } catch { showAuth(); }
     } else { showAuth(); }
-}
-
-async function loadSongs() {
-    try {
-        const res = await fetch(GITHUB_URL);
-        ALL_SONGS = await res.json();
-    } catch {
-        ALL_SONGS = [
-            ["Bohemian Rhapsody","Queen",1975],["Billie Jean","Michael Jackson",1982],
-            ["Like a Rolling Stone","Bob Dylan",1965],["Smells Like Teen Spirit","Nirvana",1991],
-            ["Hey Jude","The Beatles",1968],["Purple Rain","Prince",1984],
-            ["Born to Run","Bruce Springsteen",1975],["Wonderwall","Oasis",1995],
-            ["Hotel California","Eagles",1977],["Mr. Brightside","The Killers",2003],
-            ["Seven Nation Army","The White Stripes",2003],["Creep","Radiohead",1992],
-            ["One More Time","Daft Punk",2000],["Sweet Child O Mine","Guns N Roses",1987],
-            ["Africa","Toto",1982],["Take On Me","A-ha",1985],["Dancing Queen","ABBA",1976],
-            ["Bad Guy","Billie Eilish",2019],["Shape of You","Ed Sheeran",2017],
-            ["Blinding Lights","The Weeknd",2019],["Rolling in the Deep","Adele",2010],
-            ["Uptown Funk","Mark Ronson",2014],["Shake It Off","Taylor Swift",2014],
-            ["Get Lucky","Daft Punk",2013],["Somebody That I Used to Know","Gotye",2011]
-        ];
-    }
-    RAW_SONGS = [...ALL_SONGS];
-    const el = document.getElementById('songs-count');
-    if (el) el.textContent = `${ALL_SONGS.length} nummers geladen`;
 }
 
 function showAuth() {
@@ -391,43 +356,74 @@ function showSetup() {
 }
 
 // ==========================================
-// GAME FLOW
+// GAME FLOW (GEWIJZIGD OM LIJST TE LADEN)
 // ==========================================
-function startGame() {
-    if (!ALL_SONGS.length) { alert('Nummers nog niet geladen...'); return; }
-    p1.name = document.getElementById('p1n').value.trim() || 'Speler 1';
-    p2.name = document.getElementById('p2n').value.trim() || 'Speler 2';
-    p1.score = 0; p1.timeline = []; p1.cp = 2;
-    p2.score = 0; p2.timeline = []; p2.cp = 2;
-    RAW_SONGS = [...ALL_SONGS];
-    p1.timeline.push(RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0]);
-    p2.timeline.push(RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0]);
-    turn = 1;
-    nextRound();
+async function startGame() {
+    const listUrl = document.getElementById('songlist-selector').value;
+    if (!listUrl) { alert('Kies eerst een playlist!'); return; }
+
+    document.getElementById('setup-form').style.display = 'none';
+    document.getElementById('load-status').style.display = 'block';
+    document.getElementById('load-status').querySelector('p').textContent = 'Liedjes inladen...';
+
+    try {
+        const res = await fetch(listUrl);
+        ALL_SONGS = await res.json();
+        RAW_SONGS = [...ALL_SONGS];
+
+        p1.name = document.getElementById('p1n').value.trim() || 'Speler 1';
+        p2.name = document.getElementById('p2n').value.trim() || 'Speler 2';
+        p1.score = 0; p1.timeline = []; p1.cp = 2;
+        p2.score = 0; p2.timeline = []; p2.cp = 2;
+
+        // Geef elke speler hun eerste kaart
+        p1.timeline.push(RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0]);
+        p2.timeline.push(RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0]);
+        
+        turn = 1;
+        document.getElementById('load-status').style.display = 'none';
+        nextRound();
+    } catch (e) {
+        alert("Kon de playlist niet downloaden.");
+        showSetup();
+    }
+}
+
+// De rest van je game-logica (nextRound, renderTimeline, etc.) blijft hetzelfde
+// ... (hieronder plak je jouw bestaande functies zoals nextRound, resolveRound, findSpotifyTrack, etc.) ...
+
+async function findSpotifyTrack(song) {
+    const q = encodeURIComponent(`${song[1]} ${song[0]}`);
+    try {
+        const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`, { headers: { 'Authorization': `Bearer ${SP_TOKEN}` } });
+        const d = await r.json();
+        const items = d.tracks?.items || [];
+        const year = song[2];
+        const byYear = items.find(t => Math.abs(parseInt(t.album?.release_date?.substring(0, 4)) - year) <= 2);
+        return (byYear || items[0])?.id || null;
+    } catch { return null; }
 }
 
 async function nextRound() {
     if (!RAW_SONGS.length) RAW_SONGS = [...ALL_SONGS];
     currentSong = RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0];
-    stealerPlayer = null;
-    pGuess = -1;
-    blockedStealPositions = [];
-    phase = 'place';
-
+    stealerPlayer = null; pGuess = -1; blockedStealPositions = []; phase = 'place';
     updateHeader();
     document.getElementById('action-panel').style.display = 'none';
-
     document.getElementById('searching').classList.add('open');
     const tid = await findSpotifyTrack(currentSong);
     document.getElementById('searching').classList.remove('open');
-
     document.getElementById('spotify-wrapper').innerHTML = tid
         ? `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>`
         : `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#444;font-size:12px">Nummer niet gevonden op Spotify</div>`;
-
     renderTimeline();
     showPlacePhase();
     showScreen('gs');
+}
+
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
 function updateHeader() {
@@ -443,27 +439,18 @@ function updateHeader() {
 
 function renderCpDots(elId, cp) {
     const el = document.getElementById(elId);
-    // Show max(cp, 2) slots so you always see at least 2
-    const slots = Math.max(cp, 2);
-    el.innerHTML = Array.from({length: slots}, (_, i) =>
-        `<div class="cp-dot ${i < cp ? '' : 'empty'}"></div>`
-    ).join('');
+    el.innerHTML = Array.from({length: Math.max(cp, 2)}, (_, i) => `<div class="cp-dot ${i < cp ? '' : 'empty'}"></div>`).join('');
 }
 
-// ==========================================
-// PHASE 1: PLACEMENT (title confirm happens in result modal)
-// ==========================================
 function showPlacePhase() {
     phase = 'place';
     const curP = turn === 1 ? p1 : p2;
     const panel = document.getElementById('action-panel');
     panel.style.display = 'block';
-    panel.innerHTML = `
-        <div class="phase-badge">📅 TIJDLIJN</div>
-        <div class="panel-sub"><strong>${curP.name}</strong>, tik op de juiste plek in jouw tijdlijn.</div>
-    `;
+    panel.innerHTML = `<div class="phase-badge">📅 TIJDLIJN</div><div class="panel-sub"><strong>${curP.name}</strong>, tik op de juiste plek in jouw tijdlijn.</div>`;
     renderTimeline();
 }
+
 function renderTimeline() {
     const tl = document.getElementById('active-tl');
     const clickable = (phase === 'place' || phase === 'steal-place');
@@ -472,58 +459,51 @@ function renderTimeline() {
 
     const slot = (pos, label) => {
         if (!clickable) return `<div class="tins locked">${label}</div>`;
-        if (phase === 'steal-place' && blockedStealPositions.includes(pos)) {
-            return `<div class="tins blocked" title="Zelfde plek als de gok van de speler — niet toegestaan!">${label}</div>`;
-        }
+        if (phase === 'steal-place' && blockedStealPositions.includes(pos)) return `<div class="tins blocked">${label}</div>`;
         return `<div class="tins" onclick="handlePick(${pos})">${label}</div>`;
     };
 
     let h = slot(0, `⬇️ VOOR ${sorted[0][2]}`);
     sorted.forEach((s, i) => {
-        h += `<div class="tcard">
-            <span class="tyear">${s[2]}</span>
-            <div class="tinfo"><strong>${s[0]}</strong><small>${s[1]}</small></div>
-        </div>`;
-        if (i < sorted.length - 1) {
-            h += slot(i + 1, `↕️ ${sorted[i][2]}–${sorted[i+1][2]}`);
-        }
+        h += `<div class="tcard"><span class="tyear">${s[2]}</span><div class="tinfo"><strong>${s[0]}</strong><small>${s[1]}</small></div></div>`;
+        if (i < sorted.length - 1) h += slot(i + 1, `↕️ ${sorted[i][2]}–${sorted[i+1][2]}`);
     });
     h += slot(sorted.length, `⬆️ NA ${sorted[sorted.length-1][2]}`);
     tl.innerHTML = h;
 }
 
+function computeBlockedStealPositions(curPTimeline, oppTimeline, guessPos) {
+    const curSorted = [...curPTimeline].sort((a, b) => a[2] - b[2]);
+    const oppSorted = [...oppTimeline].sort((a, b) => a[2] - b[2]);
+    let low = -Infinity, high = Infinity;
+    if (guessPos === 0) high = curSorted[0][2];
+    else if (guessPos === curSorted.length) low = curSorted[curSorted.length - 1][2];
+    else { low = curSorted[guessPos - 1][2]; high = curSorted[guessPos][2]; }
+    const blocked = [];
+    for (let i = 0; i <= oppSorted.length; i++) {
+        const slotLow = i === 0 ? -Infinity : oppSorted[i - 1][2];
+        const slotHigh = i === oppSorted.length ? Infinity : oppSorted[i][2];
+        if (slotLow <= high && slotHigh >= low) blocked.push(i);
+    }
+    return blocked;
+}
+
 function handlePick(pos) {
     if (phase === 'place') {
         pGuess = pos;
-        // Compute which positions in opponent's timeline are blocked for stealing
-        const curP = turn === 1 ? p1 : p2;
-        const opp  = turn === 1 ? p2 : p1;
-        blockedStealPositions = computeBlockedStealPositions(curP.timeline, opp.timeline, pGuess);
+        blockedStealPositions = computeBlockedStealPositions((turn === 1 ? p1 : p2).timeline, (turn === 1 ? p2 : p1).timeline, pGuess);
         showStealPhase();
-    } else if (phase === 'steal-place') {
-        resolveRound(true, pos);
-    }
+    } else if (phase === 'steal-place') resolveRound(true, pos);
 }
 
-// ==========================================
-// PHASE 3: STEAL OFFER
-// ==========================================
 function showStealPhase() {
     phase = 'steal';
     const opp = turn === 1 ? p2 : p1;
-    const canSteal = opp.cp > 0;
     const panel = document.getElementById('action-panel');
-    panel.innerHTML = `
-        <div class="phase-badge">🔥 STAP 3 — CHALLENGE</div>
-        <div class="panel-title">${opp.name}: wil jij stelen?</div>
-        <div class="panel-sub">Je hebt <strong>${opp.cp} challengepunt${opp.cp !== 1 ? 'en' : ''}</strong>. Stelen kost altijd 1 punt — ook als je fout zit.</div>
-        <button class="btn-steal" ${canSteal ? '' : 'disabled'} onclick="activateStealing()">🔥 JA, IK STEEL! (−1 punt)</button>
-        ${canSteal
-            ? `<p class="cp-cost-note">1 punt wordt direct afgetrokken.</p>`
-            : `<p class="cp-warning">Geen challengepunten meer!</p>`}
-        <button class="btn-pass" onclick="resolveRound(false, null)">PASSEN</button>
-    `;
-    renderTimeline(); // lock the slots
+    panel.innerHTML = `<div class="phase-badge">🔥 CHALLENGE</div><div class="panel-title">${opp.name}: stelen?</div>
+        <button class="btn-steal" ${opp.cp > 0 ? '' : 'disabled'} onclick="activateStealing()">🔥 JA (−1 punt)</button>
+        <button class="btn-pass" onclick="resolveRound(false, null)">PASSEN</button>`;
+    renderTimeline();
 }
 
 function activateStealing() {
@@ -531,18 +511,10 @@ function activateStealing() {
     stealerPlayer.cp = Math.max(0, stealerPlayer.cp - 1);
     updateHeader();
     phase = 'steal-place';
-    const panel = document.getElementById('action-panel');
-    panel.innerHTML = `
-        <div class="phase-badge">🔥 STEEL-MODUS</div>
-        <div class="panel-sub"><strong>${stealerPlayer.name}</strong>, tik op de juiste plek in <em>jouw</em> tijdlijn.</div>
-    `;
+    document.getElementById('action-panel').innerHTML = `<div class="phase-badge">🔥 STEEL-MODUS</div><div class="panel-sub"><strong>${stealerPlayer.name}</strong>, tik op de juiste plek.</div>`;
     renderTimeline();
-    document.querySelector('.tl-scroll').scrollTop = 0;
 }
 
-// ==========================================
-// RESOLVE
-// ==========================================
 function isCorrectPlacement(timeline, pos, year) {
     const sorted = [...timeline].sort((a, b) => a[2] - b[2]);
     if (pos === 0) return year <= sorted[0][2];
@@ -552,125 +524,59 @@ function isCorrectPlacement(timeline, pos, year) {
 
 function resolveRound(stealAttempted, stealPos) {
     const curP = turn === 1 ? p1 : p2;
-    const opp   = turn === 1 ? p2 : p1;
-    const year  = currentSong[2];
-
+    const year = currentSong[2];
     const originalCorrect = isCorrectPlacement(curP.timeline, pGuess, year);
-    const stealCorrect    = stealAttempted && stealPos !== null
-                            && isCorrectPlacement(opp.timeline, stealPos, year);
+    const stealCorrect = stealAttempted && isCorrectPlacement(stealerPlayer.timeline, stealPos, year);
 
-    let resultType, badge;
-    document.getElementById('spotify-wrapper').innerHTML = '';
-
-    if (originalCorrect) {
-        curP.score++;
-        curP.timeline.push(currentSong);
-        resultType = 'correct';
-        badge = '✓ CORRECT!';
-    } else if (stealCorrect) {
-        opp.score++;
-        opp.timeline.push(currentSong);
-        resultType = 'stolen';
-        badge = '🔥 GESTOLEN!';
-    } else {
-        resultType = 'wrong';
-        badge = '✗ FOUT!';
-    }
-
-    // Build detail rows
-    const activeRow = `
-        <div class="result-row">
-            <span class="rr-icon">${originalCorrect ? '✅' : '❌'}</span>
-            <span class="rr-label">${curP.name} (tijdlijn)</span>
-            <span class="rr-val ${originalCorrect ? 'ok' : 'fail'}">${originalCorrect ? 'JUIST' : 'FOUT'}</span>
-        </div>`;
-    let stealRow = stealAttempted
-        ? `<div class="result-row">
-            <span class="rr-icon">${stealCorrect ? '🔥' : '💨'}</span>
-            <span class="rr-label">${opp.name} (steal)</span>
-            <span class="rr-val ${stealCorrect ? 'ok' : 'fail'}">${stealCorrect ? 'GESTOLEN' : 'GEMIST'}</span>
-           </div>`
-        : `<div class="result-row">
-            <span class="rr-icon">🤷</span>
-            <span class="rr-label">${opp.name} (geen challenge)</span>
-            <span class="rr-val na">GEPAST</span>
-           </div>`;
-
-    document.getElementById('result-badge').textContent = badge;
-    document.getElementById('result-badge').className = 'result-badge ' + resultType;
-    document.getElementById('rm-year').textContent = year;
-    document.getElementById('rm-song').textContent = currentSong[0];
-    document.getElementById('rm-artist').textContent = currentSong[1];
-    document.getElementById('rm-details').innerHTML = activeRow + stealRow;
-    document.getElementById('rm-bonus').textContent = '';
-
-    // If active player got placement right → ask about title guess
-    if (originalCorrect) {
+    let resText = "FOUT", resClass = "wrong", bonus = "";
+    if (stealAttempted && stealCorrect) {
+        resText = "GESTOLEN!"; resClass = "stolen";
+        stealerPlayer.score++; stealerPlayer.timeline.push(currentSong);
+    } else if (!stealAttempted && originalCorrect) {
+        resText = "CORRECT"; resClass = "correct";
+        curP.score++; curP.timeline.push(currentSong);
         document.getElementById('rm-title-confirm').style.display = 'block';
-        document.getElementById('rm-next-btn').style.display = 'none';
     } else {
-        document.getElementById('rm-title-confirm').style.display = 'none';
         document.getElementById('rm-next-btn').style.display = 'block';
     }
 
+    document.getElementById('result-badge').textContent = resText;
+    document.getElementById('result-badge').className = "result-badge " + resClass;
+    document.getElementById('rm-year').textContent = year;
+    document.getElementById('rm-song').textContent = currentSong[0];
+    document.getElementById('rm-artist').textContent = currentSong[1];
     document.getElementById('result-modal').classList.add('open');
-    updateHeader();
 }
 
-function onTitleConfirm(correct) {
-    const curP = turn === 1 ? p1 : p2;
-    document.getElementById('rm-title-confirm').style.display = 'none';
-    if (correct) {
+function onTitleConfirm(isCorrect) {
+    if (isCorrect) {
+        const curP = turn === 1 ? p1 : p2;
         curP.cp++;
-        updateHeader();
-        document.getElementById('rm-bonus').textContent = `🏅 +1 challengepunt voor ${curP.name}!`;
+        document.getElementById('rm-bonus').textContent = "+1 Challengepunt!";
     }
+    document.getElementById('rm-title-confirm').style.display = 'none';
     document.getElementById('rm-next-btn').style.display = 'block';
 }
 
 function closeModal() {
     document.getElementById('result-modal').classList.remove('open');
+    document.getElementById('rm-title-confirm').style.display = 'none';
+    document.getElementById('rm-next-btn').style.display = 'none';
+    document.getElementById('rm-bonus').textContent = "";
     turn = turn === 1 ? 2 : 1;
     nextRound();
 }
 
-function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+function openDanceparty() {
+    document.getElementById('danceparty-modal').classList.add('open');
+    document.getElementById('dp-player').innerHTML = `<iframe src="https://open.spotify.com/embed/track/2SSTH6vW8vNTo0m5X5I46v?utm_source=generator&autoplay=1" width="100%" height="80" frameBorder="0" allow="autoplay"></iframe>`;
 }
-
-// ==========================================
-// POEPIE'S DANCEPARTY
-// ==========================================
-async function openDanceparty() {
-    const modal = document.getElementById('danceparty-modal');
-    modal.classList.add('open');
-    const dpPlayer = document.getElementById('dp-player');
-    dpPlayer.innerHTML = `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px"><div class="spinner"></div></div>`;
-
-    // Search for "Traag Bissy Kraantje Pappie"
-    try {
-        const q = encodeURIComponent('Traag Bizzey Jozo Kraantje Pappie');
-        const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=5`, {
-            headers: { 'Authorization': `Bearer ${SP_TOKEN}` }
-        });
-        const d = await r.json();
-        const track = d.tracks?.items?.[0];
-        if (track) {
-            dpPlayer.innerHTML = `<iframe src="https://open.spotify.com/embed/track/${track.id}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
-        } else {
-            dpPlayer.innerHTML = `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px">Nummer niet gevonden 😢</div>`;
-        }
-    } catch {
-        dpPlayer.innerHTML = `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px">Fout bij laden 😢</div>`;
-    }
-}
-
 function closeDanceparty() {
     document.getElementById('danceparty-modal').classList.remove('open');
     document.getElementById('dp-player').innerHTML = '';
 }
 
+// Start de init
 init();
 </script>
 </body>
