@@ -49,7 +49,6 @@
         .score-pill { flex: 1; background: var(--sur); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid #222; }
         .score-name { font-size: 11px; color: var(--mut); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .score-num { font-family: 'Bebas Neue'; font-size: 30px; line-height: 1; }
-        /* Challenge point dots */
         .cp-row { display: flex; gap: 4px; justify-content: center; margin-top: 5px; }
         .cp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); transition: all 0.2s; }
         .cp-dot.empty { background: transparent; border: 1px solid #3a3a4a; }
@@ -72,10 +71,8 @@
         .tins.blocked { opacity: 0.4; cursor: not-allowed; pointer-events: none; border-color: var(--p1); color: var(--p1); background: rgba(255,45,85,0.05); }
         .tins.blocked::after { content: ' 🚫'; font-size: 12px; }
 
-        /* Danceparty button */
         .danceparty-btn { position: fixed; bottom: max(env(safe-area-inset-bottom, 12px), 12px); right: 16px; z-index: 50; background: #111118; border: 1px solid #222; border-radius: 50px; padding: 8px 14px; font-size: 11px; color: #333340; cursor: pointer; font-family: 'DM Sans'; letter-spacing: 0.5px; transition: all 0.2s; }
         .danceparty-btn:active { color: #ff69b4; border-color: #ff69b4; background: rgba(255,105,180,0.08); }
-        /* Danceparty modal */
         #danceparty-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.97); display: none; align-items: center; justify-content: center; z-index: 300; flex-direction: column; gap: 16px; }
         #danceparty-modal.open { display: flex; }
         .dp-title { font-family: 'Bebas Neue'; font-size: 42px; letter-spacing: 4px; background: linear-gradient(135deg, #ff69b4, #ff9500, #ffc940); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: dpPulse 1s ease-in-out infinite alternate; }
@@ -89,7 +86,6 @@
         .tinfo strong { font-size: 14px; display: block; }
         .tinfo small { font-size: 11px; color: var(--mut); }
 
-        /* Action panel */
         .action-panel { flex-shrink: 0; background: var(--sur); border-radius: 14px; border: 1px solid #252532; padding: 16px; text-align: center; margin-top: 8px; }
         .phase-badge { display: inline-block; font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 2px; padding: 4px 12px; border-radius: 50px; margin-bottom: 10px; background: rgba(255,201,64,0.1); color: var(--gold); border: 1px solid rgba(255,201,64,0.25); }
         .panel-title { font-family: 'Bebas Neue'; font-size: 16px; letter-spacing: 1px; margin-bottom: 6px; }
@@ -103,7 +99,6 @@
         .cp-cost-note { font-size: 11px; color: #ff9500; margin-top: 6px; }
         .cp-warning { font-size: 11px; color: var(--p1); margin-top: 6px; }
 
-        /* Modal */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px; }
         .modal.open { display: flex; }
         .modal-card { background: var(--sur); border-radius: 20px; padding: 32px 24px; text-align: center; width: 100%; max-width: 340px; border: 1px solid #222; animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1); }
@@ -126,7 +121,7 @@
         .rr-val.na { color: #444; }
         .result-bonus { font-size: 12px; color: var(--p2); min-height: 16px; margin-bottom: 16px; font-weight: 500; }
         .btn-next { background: linear-gradient(135deg, var(--p1), var(--p2)); color: #fff; font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 1px; padding: 16px; border: none; border-radius: 12px; width: 100%; cursor: pointer; }
-
+        
         .searching { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 150; flex-direction: column; gap: 12px; }
         .searching.open { display: flex; }
         .searching p { color: var(--mut); font-size: 13px; }
@@ -165,8 +160,30 @@
             <div class="player-dot" style="background:var(--p2)"></div>
             <input type="text" id="p2n" placeholder="Naam Speler 2" maxlength="16">
         </div>
+
+        <!-- Keuze van dataset -->
+        <div style="margin: 12px 0; text-align:center;">
+            <label style="font-size:13px; color:var(--mut); display:block; margin-bottom:8px; letter-spacing:0.5px;">
+                Welke lijst wil je gebruiken?
+            </label>
+            <select id="dataset-choice" style="
+                background:var(--s2);
+                border:1px solid #333340;
+                border-radius:10px;
+                padding:12px 16px;
+                color:var(--txt);
+                font-size:15px;
+                width:100%;
+                max-width:340px;
+                font-family:'DM Sans';
+            ">
+                <option value="default">Standaard collectie</option>
+                <option value="mnm2025">MNM top 2025 ALL TIME</option>
+            </select>
+        </div>
+
         <button class="btn-start" onclick="startGame()">SPEEL</button>
-        <p class="songs-badge" id="songs-count"></p>
+        <p class="songs-badge" id="songs-count">Laden...</p>
     </div>
 </div>
 
@@ -210,7 +227,6 @@
         <div class="result-song" id="rm-song"></div>
         <div class="result-artist" id="rm-artist"></div>
         <div class="result-details" id="rm-details"></div>
-        <!-- Title-guess confirm (shown only when active player got placement right) -->
         <div id="rm-title-confirm" style="display:none; background:#0d0d14; border-radius:10px; padding:12px 14px; margin-bottom:10px; text-align:left;">
             <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:var(--gold);margin-bottom:8px;">🎤 HAD JE DE TITEL + ARTIEST?</div>
             <div style="font-size:11px;color:var(--mut);margin-bottom:10px;">Correct geraden = +1 challengepunt</div>
@@ -232,10 +248,8 @@
     <button class="btn-dp-close" onclick="closeDanceparty()">SLUIT FEESTJE</button>
 </div>
 
-<!-- Danceparty trigger — tucked in corner, out of the way -->
 <button class="danceparty-btn" onclick="openDanceparty()">🕺 Poepie's danceparty</button>
 
-<!-- SEARCHING OVERLAY -->
 <div id="searching" class="searching">
     <div class="spinner"></div>
     <p>Nummer zoeken op Spotify…</p>
@@ -244,11 +258,7 @@
 <script>
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
-const GITHUB_URL = 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json';
 
-// ==========================================
-// STATE
-// ==========================================
 let ALL_SONGS = [], RAW_SONGS = [];
 let SP_TOKEN = '';
 let turn = 1;
@@ -257,11 +267,15 @@ let p2 = { name: "", score: 0, timeline: [], cp: 2 };
 let currentSong = null;
 let pGuess = -1;
 let stealerPlayer = null;
-
-// Phases: 'title' | 'place' | 'steal' | 'steal-place'
 let phase = 'title';
-// Positions (in opponent's timeline) that are blocked for steal (= same range as active player's guess)
 let blockedStealPositions = [];
+
+// Dataset keuze
+let selectedDataset = 'default';
+const DATASETS = {
+    default: 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json',
+    mnm2025: 'https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/mnm_top_2025_full.json'
+};
 
 function computeBlockedStealPositions(curPTimeline, oppTimeline, guessPos) {
     const curSorted = [...curPTimeline].sort((a, b) => a[2] - b[2]);
@@ -285,9 +299,7 @@ function computeBlockedStealPositions(curPTimeline, oppTimeline, guessPos) {
     return blocked;
 }
 
-// ==========================================
 // PKCE
-// ==========================================
 function generateCodeVerifier(len = 64) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
     let v = ''; const arr = new Uint8Array(len);
@@ -302,9 +314,7 @@ async function generateCodeChallenge(verifier) {
         .replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
 }
 
-// ==========================================
-// AUTH
-// ==========================================
+// Spotify login
 async function loginWithSpotify() {
     const verifier = generateCodeVerifier();
     const challenge = await generateCodeChallenge(verifier);
@@ -323,9 +333,7 @@ async function exchangeCode(code) {
     return (await res.json()).access_token;
 }
 
-// ==========================================
-// SPOTIFY SEARCH
-// ==========================================
+// Spotify track zoeken
 async function findSpotifyTrack(song) {
     const q = encodeURIComponent(`${song[1]} ${song[0]}`);
     try {
@@ -338,13 +346,10 @@ async function findSpotifyTrack(song) {
     } catch { return null; }
 }
 
-// ==========================================
-// INIT
-// ==========================================
+// INIT + laden nummers
 async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    loadSongs();
     if (code) {
         try {
             SP_TOKEN = await exchangeCode(code);
@@ -352,49 +357,59 @@ async function init() {
             window.history.replaceState({}, document.title, window.location.pathname);
             showSetup();
         } catch { showAuth(); }
-    } else { showAuth(); }
+    } else {
+        showAuth();
+    }
 }
 
 async function loadSongs() {
+    const url = DATASETS[selectedDataset];
+    const name = selectedDataset === 'mnm2025' ? 'MNM top 2025 ALL TIME' : 'standaard';
+
     try {
-        const res = await fetch(GITHUB_URL);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Fetch mislukt: ' + res.status);
         ALL_SONGS = await res.json();
-    } catch {
+        if (!Array.isArray(ALL_SONGS) || ALL_SONGS.length === 0) throw new Error('Geen nummers');
+    } catch (e) {
+        console.error(e);
         ALL_SONGS = [
             ["Bohemian Rhapsody","Queen",1975],["Billie Jean","Michael Jackson",1982],
             ["Like a Rolling Stone","Bob Dylan",1965],["Smells Like Teen Spirit","Nirvana",1991],
             ["Hey Jude","The Beatles",1968],["Purple Rain","Prince",1984],
             ["Born to Run","Bruce Springsteen",1975],["Wonderwall","Oasis",1995],
-            ["Hotel California","Eagles",1977],["Mr. Brightside","The Killers",2003],
-            ["Seven Nation Army","The White Stripes",2003],["Creep","Radiohead",1992],
-            ["One More Time","Daft Punk",2000],["Sweet Child O Mine","Guns N Roses",1987],
-            ["Africa","Toto",1982],["Take On Me","A-ha",1985],["Dancing Queen","ABBA",1976],
-            ["Bad Guy","Billie Eilish",2019],["Shape of You","Ed Sheeran",2017],
-            ["Blinding Lights","The Weeknd",2019],["Rolling in the Deep","Adele",2010],
-            ["Uptown Funk","Mark Ronson",2014],["Shake It Off","Taylor Swift",2014],
-            ["Get Lucky","Daft Punk",2013],["Somebody That I Used to Know","Gotye",2011]
+            ["Hotel California","Eagles",1977],["Mr. Brightside","The Killers",2003]
         ];
     }
+
     RAW_SONGS = [...ALL_SONGS];
     const el = document.getElementById('songs-count');
-    if (el) el.textContent = `${ALL_SONGS.length} nummers geladen`;
+    if (el) el.textContent = `${ALL_SONGS.length} nummers geladen (${name})`;
 }
 
 function showAuth() {
     document.getElementById('load-status').style.display = 'none';
     document.getElementById('auth-section').style.display = 'block';
 }
+
 function showSetup() {
     document.getElementById('load-status').style.display = 'none';
     document.getElementById('auth-section').style.display = 'none';
     document.getElementById('setup-form').style.display = 'flex';
+
+    const select = document.getElementById('dataset-choice');
+    select.value = selectedDataset;
+    select.addEventListener('change', (e) => {
+        selectedDataset = e.target.value;
+        loadSongs();
+    });
+
+    loadSongs();
 }
 
-// ==========================================
-// GAME FLOW
-// ==========================================
+// Game flow
 function startGame() {
-    if (!ALL_SONGS.length) { alert('Nummers nog niet geladen...'); return; }
+    if (!ALL_SONGS.length) { alert('Nog geen nummers geladen...'); return; }
     p1.name = document.getElementById('p1n').value.trim() || 'Speler 1';
     p2.name = document.getElementById('p2n').value.trim() || 'Speler 2';
     p1.score = 0; p1.timeline = []; p1.cp = 2;
@@ -443,16 +458,12 @@ function updateHeader() {
 
 function renderCpDots(elId, cp) {
     const el = document.getElementById(elId);
-    // Show max(cp, 2) slots so you always see at least 2
     const slots = Math.max(cp, 2);
     el.innerHTML = Array.from({length: slots}, (_, i) =>
         `<div class="cp-dot ${i < cp ? '' : 'empty'}"></div>`
     ).join('');
 }
 
-// ==========================================
-// PHASE 1: PLACEMENT (title confirm happens in result modal)
-// ==========================================
 function showPlacePhase() {
     phase = 'place';
     const curP = turn === 1 ? p1 : p2;
@@ -464,6 +475,7 @@ function showPlacePhase() {
     `;
     renderTimeline();
 }
+
 function renderTimeline() {
     const tl = document.getElementById('active-tl');
     const clickable = (phase === 'place' || phase === 'steal-place');
@@ -473,7 +485,7 @@ function renderTimeline() {
     const slot = (pos, label) => {
         if (!clickable) return `<div class="tins locked">${label}</div>`;
         if (phase === 'steal-place' && blockedStealPositions.includes(pos)) {
-            return `<div class="tins blocked" title="Zelfde plek als de gok van de speler — niet toegestaan!">${label}</div>`;
+            return `<div class="tins blocked" title="Zelfde range als de gok van de speler — niet toegestaan!">${label}</div>`;
         }
         return `<div class="tins" onclick="handlePick(${pos})">${label}</div>`;
     };
@@ -495,7 +507,6 @@ function renderTimeline() {
 function handlePick(pos) {
     if (phase === 'place') {
         pGuess = pos;
-        // Compute which positions in opponent's timeline are blocked for stealing
         const curP = turn === 1 ? p1 : p2;
         const opp  = turn === 1 ? p2 : p1;
         blockedStealPositions = computeBlockedStealPositions(curP.timeline, opp.timeline, pGuess);
@@ -505,9 +516,6 @@ function handlePick(pos) {
     }
 }
 
-// ==========================================
-// PHASE 3: STEAL OFFER
-// ==========================================
 function showStealPhase() {
     phase = 'steal';
     const opp = turn === 1 ? p2 : p1;
@@ -518,12 +526,10 @@ function showStealPhase() {
         <div class="panel-title">${opp.name}: wil jij stelen?</div>
         <div class="panel-sub">Je hebt <strong>${opp.cp} challengepunt${opp.cp !== 1 ? 'en' : ''}</strong>. Stelen kost altijd 1 punt — ook als je fout zit.</div>
         <button class="btn-steal" ${canSteal ? '' : 'disabled'} onclick="activateStealing()">🔥 JA, IK STEEL! (−1 punt)</button>
-        ${canSteal
-            ? `<p class="cp-cost-note">1 punt wordt direct afgetrokken.</p>`
-            : `<p class="cp-warning">Geen challengepunten meer!</p>`}
+        ${canSteal ? `<p class="cp-cost-note">1 punt wordt direct afgetrokken.</p>` : `<p class="cp-warning">Geen challengepunten meer!</p>`}
         <button class="btn-pass" onclick="resolveRound(false, null)">PASSEN</button>
     `;
-    renderTimeline(); // lock the slots
+    renderTimeline();
 }
 
 function activateStealing() {
@@ -540,9 +546,6 @@ function activateStealing() {
     document.querySelector('.tl-scroll').scrollTop = 0;
 }
 
-// ==========================================
-// RESOLVE
-// ==========================================
 function isCorrectPlacement(timeline, pos, year) {
     const sorted = [...timeline].sort((a, b) => a[2] - b[2]);
     if (pos === 0) return year <= sorted[0][2];
@@ -556,8 +559,7 @@ function resolveRound(stealAttempted, stealPos) {
     const year  = currentSong[2];
 
     const originalCorrect = isCorrectPlacement(curP.timeline, pGuess, year);
-    const stealCorrect    = stealAttempted && stealPos !== null
-                            && isCorrectPlacement(opp.timeline, stealPos, year);
+    const stealCorrect    = stealAttempted && stealPos !== null && isCorrectPlacement(opp.timeline, stealPos, year);
 
     let resultType, badge;
     document.getElementById('spotify-wrapper').innerHTML = '';
@@ -577,7 +579,6 @@ function resolveRound(stealAttempted, stealPos) {
         badge = '✗ FOUT!';
     }
 
-    // Build detail rows
     const activeRow = `
         <div class="result-row">
             <span class="rr-icon">${originalCorrect ? '✅' : '❌'}</span>
@@ -604,7 +605,6 @@ function resolveRound(stealAttempted, stealPos) {
     document.getElementById('rm-details').innerHTML = activeRow + stealRow;
     document.getElementById('rm-bonus').textContent = '';
 
-    // If active player got placement right → ask about title guess
     if (originalCorrect) {
         document.getElementById('rm-title-confirm').style.display = 'block';
         document.getElementById('rm-next-btn').style.display = 'none';
@@ -639,16 +639,13 @@ function showScreen(id) {
     document.getElementById(id).classList.add('active');
 }
 
-// ==========================================
-// POEPIE'S DANCEPARTY
-// ==========================================
+// Danceparty
 async function openDanceparty() {
     const modal = document.getElementById('danceparty-modal');
     modal.classList.add('open');
     const dpPlayer = document.getElementById('dp-player');
     dpPlayer.innerHTML = `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px"><div class="spinner"></div></div>`;
 
-    // Search for "Traag Bissy Kraantje Pappie"
     try {
         const q = encodeURIComponent('Traag Bizzey Jozo Kraantje Pappie');
         const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=5`, {
