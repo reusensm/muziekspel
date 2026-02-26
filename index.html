@@ -69,6 +69,21 @@
         .tins { padding: 10px 16px; border: 2px dashed #2a2a38; border-radius: 10px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; font-size: 16px; letter-spacing: 1px; cursor: pointer; margin: 5px 0; transition: all 0.15s; background: transparent; }
         .tins:active { background: rgba(255,201,64,0.08); border-color: var(--gold); }
         .tins.locked { opacity: 0.35; cursor: default; pointer-events: none; }
+        .tins.blocked { opacity: 0.4; cursor: not-allowed; pointer-events: none; border-color: var(--p1); color: var(--p1); background: rgba(255,45,85,0.05); }
+        .tins.blocked::after { content: ' 🚫'; font-size: 12px; }
+
+        /* Danceparty button */
+        .danceparty-btn { position: fixed; bottom: max(env(safe-area-inset-bottom, 12px), 12px); right: 16px; z-index: 50; background: #111118; border: 1px solid #222; border-radius: 50px; padding: 8px 14px; font-size: 11px; color: #333340; cursor: pointer; font-family: 'DM Sans'; letter-spacing: 0.5px; transition: all 0.2s; }
+        .danceparty-btn:active { color: #ff69b4; border-color: #ff69b4; background: rgba(255,105,180,0.08); }
+        /* Danceparty modal */
+        #danceparty-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.97); display: none; align-items: center; justify-content: center; z-index: 300; flex-direction: column; gap: 16px; }
+        #danceparty-modal.open { display: flex; }
+        .dp-title { font-family: 'Bebas Neue'; font-size: 42px; letter-spacing: 4px; background: linear-gradient(135deg, #ff69b4, #ff9500, #ffc940); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: dpPulse 1s ease-in-out infinite alternate; }
+        @keyframes dpPulse { from { opacity: 0.7; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
+        .dp-sub { font-size: 13px; color: #666; letter-spacing: 1px; }
+        .dp-player { width: 300px; height: 80px; border-radius: 12px; overflow: hidden; }
+        .dp-player iframe { width: 100%; height: 100%; border: none; }
+        .btn-dp-close { background: var(--gray); color: var(--mut); font-family: 'Bebas Neue'; font-size: 16px; letter-spacing: 1px; padding: 12px 28px; border: none; border-radius: 50px; cursor: pointer; }
         .tcard { background: var(--s2); padding: 11px 14px; border-radius: 10px; display: flex; align-items: center; gap: 12px; border-left: 3px solid var(--gold); margin: 3px 0; }
         .tyear { font-family: 'Bebas Neue'; font-size: 26px; color: var(--gold); min-width: 54px; }
         .tinfo strong { font-size: 14px; display: block; }
@@ -99,8 +114,17 @@
         .result-badge.wrong { background: rgba(255,45,85,0.15); color: var(--p1); border: 1px solid rgba(255,45,85,0.3); }
         .result-year { font-family: 'Bebas Neue'; font-size: 56px; line-height: 1; color: var(--gold); margin-bottom: 4px; }
         .result-song { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-        .result-artist { font-size: 14px; color: var(--mut); margin-bottom: 10px; }
-        .result-bonus { font-size: 12px; color: var(--p2); min-height: 18px; margin-bottom: 20px; font-weight: 500; }
+        .result-artist { font-size: 14px; color: var(--mut); margin-bottom: 12px; }
+        .result-details { background: #0d0d14; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; text-align: left; }
+        .result-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12px; }
+        .result-row + .result-row { border-top: 1px solid #1a1a24; }
+        .result-row .rr-icon { font-size: 14px; flex-shrink: 0; }
+        .result-row .rr-label { color: var(--mut); flex: 1; }
+        .result-row .rr-val { font-weight: 700; }
+        .rr-val.ok { color: #34c759; }
+        .rr-val.fail { color: var(--p1); }
+        .rr-val.na { color: #444; }
+        .result-bonus { font-size: 12px; color: var(--p2); min-height: 16px; margin-bottom: 16px; font-weight: 500; }
         .btn-next { background: linear-gradient(135deg, var(--p1), var(--p2)); color: #fff; font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 1px; padding: 16px; border: none; border-radius: 12px; width: 100%; cursor: pointer; }
 
         .searching { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 150; flex-direction: column; gap: 12px; }
@@ -185,10 +209,22 @@
         <div class="result-year" id="rm-year"></div>
         <div class="result-song" id="rm-song"></div>
         <div class="result-artist" id="rm-artist"></div>
+        <div class="result-details" id="rm-details"></div>
         <div class="result-bonus" id="rm-bonus"></div>
         <button class="btn-next" onclick="closeModal()">VOLGENDE RONDE ›</button>
     </div>
 </div>
+
+<!-- DANCEPARTY MODAL -->
+<div id="danceparty-modal">
+    <div class="dp-title">🎉 POEPIE'S DANCEPARTY 🎉</div>
+    <div class="dp-sub">traag — bissy & kraantje pappie</div>
+    <div class="dp-player" id="dp-player"></div>
+    <button class="btn-dp-close" onclick="closeDanceparty()">SLUIT FEESTJE</button>
+</div>
+
+<!-- Danceparty trigger — tucked in corner, out of the way -->
+<button class="danceparty-btn" onclick="openDanceparty()">🕺 Poepie's danceparty</button>
 
 <!-- SEARCHING OVERLAY -->
 <div id="searching" class="searching">
@@ -216,6 +252,30 @@ let titleGuessedCorrect = false;
 
 // Phases: 'title' | 'place' | 'steal' | 'steal-place'
 let phase = 'title';
+// Positions (in opponent's timeline) that are blocked for steal (= same range as active player's guess)
+let blockedStealPositions = [];
+
+function computeBlockedStealPositions(curPTimeline, oppTimeline, guessPos) {
+    const curSorted = [...curPTimeline].sort((a, b) => a[2] - b[2]);
+    const oppSorted = [...oppTimeline].sort((a, b) => a[2] - b[2]);
+    let lowYear = -Infinity, highYear = Infinity;
+    if (guessPos === 0) {
+        highYear = curSorted[0][2];
+    } else if (guessPos === curSorted.length) {
+        lowYear = curSorted[curSorted.length - 1][2];
+    } else {
+        lowYear = curSorted[guessPos - 1][2];
+        highYear = curSorted[guessPos][2];
+    }
+    const blocked = [];
+    const n = oppSorted.length;
+    for (let i = 0; i <= n; i++) {
+        const slotLow  = i === 0 ? -Infinity : oppSorted[i - 1][2];
+        const slotHigh = i === n ?  Infinity : oppSorted[i][2];
+        if (slotLow <= highYear && slotHigh >= lowYear) blocked.push(i);
+    }
+    return blocked;
+}
 
 // ==========================================
 // PKCE
@@ -344,6 +404,7 @@ async function nextRound() {
     stealerPlayer = null;
     pGuess = -1;
     titleGuessedCorrect = false;
+    blockedStealPositions = [];
     phase = 'title';
 
     updateHeader();
@@ -419,8 +480,13 @@ function renderTimeline() {
     const usePlayer = phase === 'steal-place' ? stealerPlayer : (turn === 1 ? p1 : p2);
     const sorted = [...usePlayer.timeline].sort((a, b) => a[2] - b[2]);
 
-    const slot = (pos, label) =>
-        `<div class="tins ${clickable ? '' : 'locked'}" ${clickable ? `onclick="handlePick(${pos})"` : ''}>${label}</div>`;
+    const slot = (pos, label) => {
+        if (!clickable) return `<div class="tins locked">${label}</div>`;
+        if (phase === 'steal-place' && blockedStealPositions.includes(pos)) {
+            return `<div class="tins blocked" title="Zelfde plek als de gok van de speler — niet toegestaan!">${label}</div>`;
+        }
+        return `<div class="tins" onclick="handlePick(${pos})">${label}</div>`;
+    };
 
     let h = slot(0, `⬇️ VOOR ${sorted[0][2]}`);
     sorted.forEach((s, i) => {
@@ -439,6 +505,10 @@ function renderTimeline() {
 function handlePick(pos) {
     if (phase === 'place') {
         pGuess = pos;
+        // Compute which positions in opponent's timeline are blocked for stealing
+        const curP = turn === 1 ? p1 : p2;
+        const opp  = turn === 1 ? p2 : p1;
+        blockedStealPositions = computeBlockedStealPositions(curP.timeline, opp.timeline, pGuess);
         showStealPhase();
     } else if (phase === 'steal-place') {
         resolveRound(true, pos);
@@ -521,11 +591,37 @@ function resolveRound(stealAttempted, stealPos) {
         badge = '✗ FOUT!';
     }
 
+    // Build detail rows
+    const activeRow = `
+        <div class="result-row">
+            <span class="rr-icon">${originalCorrect ? '✅' : '❌'}</span>
+            <span class="rr-label">${curP.name} (tijdlijn)</span>
+            <span class="rr-val ${originalCorrect ? 'ok' : 'fail'}">${originalCorrect ? 'JUIST' : 'FOUT'}</span>
+        </div>`;
+
+    let stealRow = '';
+    if (stealAttempted) {
+        stealRow = `
+        <div class="result-row">
+            <span class="rr-icon">${stealCorrect ? '🔥' : '💨'}</span>
+            <span class="rr-label">${opp.name} (steal)</span>
+            <span class="rr-val ${stealCorrect ? 'ok' : 'fail'}">${stealCorrect ? 'GESTOLEN' : 'GEMIST'}</span>
+        </div>`;
+    } else {
+        stealRow = `
+        <div class="result-row">
+            <span class="rr-icon">🤷</span>
+            <span class="rr-label">${opp.name} (geen challenge)</span>
+            <span class="rr-val na">GEPAST</span>
+        </div>`;
+    }
+
     document.getElementById('result-badge').textContent = badge;
     document.getElementById('result-badge').className = 'result-badge ' + resultType;
     document.getElementById('rm-year').textContent = year;
     document.getElementById('rm-song').textContent = currentSong[0];
     document.getElementById('rm-artist').textContent = currentSong[1];
+    document.getElementById('rm-details').innerHTML = activeRow + stealRow;
     document.getElementById('rm-bonus').textContent = bonusMsg;
     document.getElementById('result-modal').classList.add('open');
     updateHeader();
@@ -540,6 +636,38 @@ function closeModal() {
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+}
+
+// ==========================================
+// POEPIE'S DANCEPARTY
+// ==========================================
+async function openDanceparty() {
+    const modal = document.getElementById('danceparty-modal');
+    modal.classList.add('open');
+    const dpPlayer = document.getElementById('dp-player');
+    dpPlayer.innerHTML = `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px"><div class="spinner"></div></div>`;
+
+    // Search for "Traag Bissy Kraantje Pappie"
+    try {
+        const q = encodeURIComponent('Traag Bissy Kraantje Pappie');
+        const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=5`, {
+            headers: { 'Authorization': `Bearer ${SP_TOKEN}` }
+        });
+        const d = await r.json();
+        const track = d.tracks?.items?.[0];
+        if (track) {
+            dpPlayer.innerHTML = `<iframe src="https://open.spotify.com/embed/track/${track.id}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+        } else {
+            dpPlayer.innerHTML = `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px">Nummer niet gevonden 😢</div>`;
+        }
+    } catch {
+        dpPlayer.innerHTML = `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px">Fout bij laden 😢</div>`;
+    }
+}
+
+function closeDanceparty() {
+    document.getElementById('danceparty-modal').classList.remove('open');
+    document.getElementById('dp-player').innerHTML = '';
 }
 
 init();
