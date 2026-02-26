@@ -210,15 +210,24 @@
         <div class="result-song" id="rm-song"></div>
         <div class="result-artist" id="rm-artist"></div>
         <div class="result-details" id="rm-details"></div>
+        <!-- Title-guess confirm (shown only when active player got placement right) -->
+        <div id="rm-title-confirm" style="display:none; background:#0d0d14; border-radius:10px; padding:12px 14px; margin-bottom:10px; text-align:left;">
+            <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:var(--gold);margin-bottom:8px;">🎤 HAD JE DE TITEL + ARTIEST?</div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:10px;">Correct geraden = +1 challengepunt</div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-correct" style="font-size:16px;padding:10px;" onclick="onTitleConfirm(true)">✓ JA</button>
+                <button class="btn-wrong-guess" style="font-size:16px;padding:10px;" onclick="onTitleConfirm(false)">✗ NEE</button>
+            </div>
+        </div>
         <div class="result-bonus" id="rm-bonus"></div>
-        <button class="btn-next" onclick="closeModal()">VOLGENDE RONDE ›</button>
+        <button class="btn-next" id="rm-next-btn" onclick="closeModal()" style="display:none">VOLGENDE RONDE ›</button>
     </div>
 </div>
 
 <!-- DANCEPARTY MODAL -->
 <div id="danceparty-modal">
     <div class="dp-title">🎉 POEPIE'S DANCEPARTY 🎉</div>
-    <div class="dp-sub">traag — bissy & kraantje pappie</div>
+    <div class="dp-sub">traag — bizzey, jozo & kraantje pappie</div>
     <div class="dp-player" id="dp-player"></div>
     <button class="btn-dp-close" onclick="closeDanceparty()">SLUIT FEESTJE</button>
 </div>
@@ -248,7 +257,6 @@ let p2 = { name: "", score: 0, timeline: [], cp: 2 };
 let currentSong = null;
 let pGuess = -1;
 let stealerPlayer = null;
-let titleGuessedCorrect = false;
 
 // Phases: 'title' | 'place' | 'steal' | 'steal-place'
 let phase = 'title';
@@ -403,9 +411,8 @@ async function nextRound() {
     currentSong = RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0];
     stealerPlayer = null;
     pGuess = -1;
-    titleGuessedCorrect = false;
     blockedStealPositions = [];
-    phase = 'title';
+    phase = 'place';
 
     updateHeader();
     document.getElementById('action-panel').style.display = 'none';
@@ -415,11 +422,11 @@ async function nextRound() {
     document.getElementById('searching').classList.remove('open');
 
     document.getElementById('spotify-wrapper').innerHTML = tid
-        ? `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`
+        ? `<iframe src="https://open.spotify.com/embed/track/${tid}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>`
         : `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#444;font-size:12px">Nummer niet gevonden op Spotify</div>`;
 
     renderTimeline();
-    showTitlePhase();
+    showPlacePhase();
     showScreen('gs');
 }
 
@@ -444,36 +451,19 @@ function renderCpDots(elId, cp) {
 }
 
 // ==========================================
-// PHASE 1: TITLE GUESS
+// PHASE 1: PLACEMENT (title confirm happens in result modal)
 // ==========================================
-function showTitlePhase() {
+function showPlacePhase() {
+    phase = 'place';
     const curP = turn === 1 ? p1 : p2;
     const panel = document.getElementById('action-panel');
     panel.style.display = 'block';
     panel.innerHTML = `
-        <div class="phase-badge">🎤 STAP 1 — TITEL & ARTIEST</div>
-        <div class="panel-title">${curP.name}, raad hardop!</div>
-        <div class="panel-sub">Wat is de <strong>titel</strong> en <strong>artiest</strong> van dit nummer?<br><small style="color:#3a3a4a">Correct = +1 challengepunt 🏅</small></div>
-        <button class="btn-correct" onclick="onTitleResult(true)">✓ CORRECT GERADEN</button>
-        <button class="btn-wrong-guess" onclick="onTitleResult(false)">✗ NIET GERADEN</button>
-    `;
-}
-
-function onTitleResult(correct) {
-    titleGuessedCorrect = correct;
-    phase = 'place';
-    const panel = document.getElementById('action-panel');
-    const curP = turn === 1 ? p1 : p2;
-    panel.innerHTML = `
-        <div class="phase-badge">📅 STAP 2 — TIJDLIJN</div>
+        <div class="phase-badge">📅 TIJDLIJN</div>
         <div class="panel-sub"><strong>${curP.name}</strong>, tik op de juiste plek in jouw tijdlijn.</div>
     `;
     renderTimeline();
 }
-
-// ==========================================
-// PHASE 2: TIMELINE PLACEMENT
-// ==========================================
 function renderTimeline() {
     const tl = document.getElementById('active-tl');
     const clickable = (phase === 'place' || phase === 'steal-place');
@@ -569,7 +559,7 @@ function resolveRound(stealAttempted, stealPos) {
     const stealCorrect    = stealAttempted && stealPos !== null
                             && isCorrectPlacement(opp.timeline, stealPos, year);
 
-    let resultType, badge, bonusMsg = '';
+    let resultType, badge;
     document.getElementById('spotify-wrapper').innerHTML = '';
 
     if (originalCorrect) {
@@ -577,10 +567,6 @@ function resolveRound(stealAttempted, stealPos) {
         curP.timeline.push(currentSong);
         resultType = 'correct';
         badge = '✓ CORRECT!';
-        if (titleGuessedCorrect) {
-            curP.cp++;
-            bonusMsg = `🏅 +1 challengepunt voor ${curP.name}!`;
-        }
     } else if (stealCorrect) {
         opp.score++;
         opp.timeline.push(currentSong);
@@ -598,23 +584,17 @@ function resolveRound(stealAttempted, stealPos) {
             <span class="rr-label">${curP.name} (tijdlijn)</span>
             <span class="rr-val ${originalCorrect ? 'ok' : 'fail'}">${originalCorrect ? 'JUIST' : 'FOUT'}</span>
         </div>`;
-
-    let stealRow = '';
-    if (stealAttempted) {
-        stealRow = `
-        <div class="result-row">
+    let stealRow = stealAttempted
+        ? `<div class="result-row">
             <span class="rr-icon">${stealCorrect ? '🔥' : '💨'}</span>
             <span class="rr-label">${opp.name} (steal)</span>
             <span class="rr-val ${stealCorrect ? 'ok' : 'fail'}">${stealCorrect ? 'GESTOLEN' : 'GEMIST'}</span>
-        </div>`;
-    } else {
-        stealRow = `
-        <div class="result-row">
+           </div>`
+        : `<div class="result-row">
             <span class="rr-icon">🤷</span>
             <span class="rr-label">${opp.name} (geen challenge)</span>
             <span class="rr-val na">GEPAST</span>
-        </div>`;
-    }
+           </div>`;
 
     document.getElementById('result-badge').textContent = badge;
     document.getElementById('result-badge').className = 'result-badge ' + resultType;
@@ -622,9 +602,30 @@ function resolveRound(stealAttempted, stealPos) {
     document.getElementById('rm-song').textContent = currentSong[0];
     document.getElementById('rm-artist').textContent = currentSong[1];
     document.getElementById('rm-details').innerHTML = activeRow + stealRow;
-    document.getElementById('rm-bonus').textContent = bonusMsg;
+    document.getElementById('rm-bonus').textContent = '';
+
+    // If active player got placement right → ask about title guess
+    if (originalCorrect) {
+        document.getElementById('rm-title-confirm').style.display = 'block';
+        document.getElementById('rm-next-btn').style.display = 'none';
+    } else {
+        document.getElementById('rm-title-confirm').style.display = 'none';
+        document.getElementById('rm-next-btn').style.display = 'block';
+    }
+
     document.getElementById('result-modal').classList.add('open');
     updateHeader();
+}
+
+function onTitleConfirm(correct) {
+    const curP = turn === 1 ? p1 : p2;
+    document.getElementById('rm-title-confirm').style.display = 'none';
+    if (correct) {
+        curP.cp++;
+        updateHeader();
+        document.getElementById('rm-bonus').textContent = `🏅 +1 challengepunt voor ${curP.name}!`;
+    }
+    document.getElementById('rm-next-btn').style.display = 'block';
 }
 
 function closeModal() {
@@ -649,14 +650,14 @@ async function openDanceparty() {
 
     // Search for "Traag Bissy Kraantje Pappie"
     try {
-        const q = encodeURIComponent('Traag Bissy Kraantje Pappie');
+        const q = encodeURIComponent('Traag Bizzey Jozo Kraantje Pappie');
         const r = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=5`, {
             headers: { 'Authorization': `Bearer ${SP_TOKEN}` }
         });
         const d = await r.json();
         const track = d.tracks?.items?.[0];
         if (track) {
-            dpPlayer.innerHTML = `<iframe src="https://open.spotify.com/embed/track/${track.id}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+            dpPlayer.innerHTML = `<iframe src="https://open.spotify.com/embed/track/${track.id}?utm_source=generator&autoplay=1&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
         } else {
             dpPlayer.innerHTML = `<div style="height:80px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px">Nummer niet gevonden 😢</div>`;
         }
