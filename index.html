@@ -64,9 +64,10 @@
         .player-bar-label { flex: 1; font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 2px; color: #44445a; }
         .player-bar-status { font-size: 12px; color: var(--mut); }
         .player-bar .spotify-embed-wrap { width: 100%; height: 80px; overflow: hidden; position: relative; }
-        .player-bar .spotify-embed-wrap iframe { border-radius: 0 !important; width: 100%; height: 80px; border: none; }
-        /* Hide song title, artist, thumbnail — only show transport controls */
-        .player-bar .spotify-embed-wrap::after { content: ''; position: absolute; top: 0; left: 0; right: 80px; bottom: 0; background: var(--sur); z-index: 1; pointer-events: none; }
+        /* Embed is 152px (normal size = full playback on mobile), but we only show bottom 80px (controls) */
+        .player-bar .spotify-embed-wrap iframe { border-radius: 0 !important; width: 100%; height: 152px; border: none; position: absolute; bottom: 0; left: 0; }
+        /* Overlay to hide any song info that peeks through */
+        .spotify-info-cover { position: absolute; top: 0; left: 0; right: 80px; bottom: 0; background: var(--sur); z-index: 2; }
 
         .tl-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
         .tl-scroll::-webkit-scrollbar { display: none; }
@@ -233,7 +234,10 @@
                 <div class="player-bar-status" id="player-status">Laden...</div>
             </div>
         </div>
-        <div class="spotify-embed-wrap" id="spotify-embed-div"></div>
+        <div class="spotify-embed-wrap">
+            <div id="spotify-embed-div" style="width:100%;height:152px;position:absolute;bottom:0;left:0;"></div>
+            <div class="spotify-info-cover"></div>
+        </div>
     </div>
 
     <div class="tl-scroll">
@@ -323,7 +327,7 @@ const DATASETS = {
 // === SPOTIFY EMBED CONTROLLER SETUP ===
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
     const element = document.getElementById('spotify-embed-div');
-    IFrameAPI.createController(element, { width: '100%', height: 80 }, (controller) => {
+    IFrameAPI.createController(element, { width: '100%', height: 152 }, (controller) => {
         embedController = controller;
         controller.addListener('playback_update', (e) => {
             isMusicPlaying = !e.data.isPaused;

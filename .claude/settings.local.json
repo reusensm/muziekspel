@@ -5,7 +5,9 @@
       "Bash(pip show:*)",
       "Bash(findstr:*)",
       "WebSearch",
-      "WebFetch(domain:joe.be)"
+      "WebFetch(domain:joe.be)",
+      "Bash(curl:*)",
+      "Bash(grep:*)"
     ]
   }
 }
