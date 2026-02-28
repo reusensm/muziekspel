@@ -7,7 +7,10 @@
       "WebSearch",
       "WebFetch(domain:joe.be)",
       "Bash(curl:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(for sid in joe joe_fm joe-fm joefm joe_be joebe)",
+      "Bash(do echo -n \"$sid: \")",
+      "Bash(done)"
     ]
   }
 }
