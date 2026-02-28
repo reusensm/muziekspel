@@ -197,8 +197,8 @@
                 max-width:340px;
                 font-family:'DM Sans';
             ">
-                <option value="default">Standaard collectie</option>
                 <option value="hitster">JOE TOP 2000 of 2025</option>
+                <option value="default">Other set</option>
             </select>
         </div>
 
@@ -294,7 +294,6 @@
     <p>Nummer zoeken op Spotify…</p>
 </div>
 
-https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/hitster_songs.json
 <script>
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
@@ -318,7 +317,7 @@ let currentTrackId = null;
 let pendingTrackId = null;
 
 // Dataset keuze
-let selectedDataset = 'default';
+let selectedDataset = 'hitster';
 const DATASETS = {
     default: 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json',
     hitster: 'https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/hitster_songs.json'
@@ -452,7 +451,7 @@ async function init() {
 
 async function loadSongs() {
     const url = DATASETS[selectedDataset];
-    const names = { default: 'standaard', hitster: 'JOE TOP 2000 of 2025' };
+    const names = { hitster: 'JOE TOP 2000 of 2025', default: 'Other set' };
     const name = names[selectedDataset] || selectedDataset;
     try {
         const res = await fetch(url);
