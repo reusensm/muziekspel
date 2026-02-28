@@ -16,7 +16,7 @@ Credentials: put these in a .env file next to this script (never commit it!):
     SPOTIFY_CLIENT_ID=...
     SPOTIFY_CLIENT_SECRET=...
 
-Setup: In the Spotify Developer Dashboard, add http://localhost:8888/callback
+Setup: In the Spotify Developer Dashboard, add https://localhost:8888/callback
        as a Redirect URI for your app.
 """
 
@@ -40,7 +40,7 @@ _load_dotenv()
 
 import musicbrainzngs
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyOAuth
 
 # ---------------------------------------------------------------------------
 # MusicBrainz setup – identify your app as required by their API policy
@@ -54,10 +54,14 @@ musicbrainzngs.set_useragent("HitsterPlaylistConverter", "1.0", "hitster@example
 
 def get_playlist_tracks(playlist_url: str, client_id: str, client_secret: str) -> list[dict]:
     """Return a list of track dicts from a Spotify playlist."""
+    cache_path = os.path.join(os.path.dirname(__file__), ".spotify_cache")
     sp = spotipy.Spotify(
-        auth_manager=SpotifyClientCredentials(
+        auth_manager=SpotifyOAuth(
             client_id=client_id,
             client_secret=client_secret,
+            redirect_uri="https://localhost:8888/callback",
+            scope="playlist-read-private playlist-read-collaborative",
+            cache_path=cache_path,
         )
     )
 

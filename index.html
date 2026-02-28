@@ -59,13 +59,14 @@
         .turn-name { font-family: 'Bebas Neue'; font-size: 16px; white-space: nowrap; }
 
         /* Custom music player bar */
-        .player-bar { position: relative; height: 64px; border-radius: 12px; overflow: hidden; background: var(--sur); border: 1px solid #1a1a24; flex-shrink: 0; margin-bottom: 14px; display: flex; align-items: center; padding: 0 16px; gap: 12px; }
+        .player-bar { position: relative; border-radius: 12px; overflow: hidden; background: var(--sur); border: 1px solid #1a1a24; flex-shrink: 0; margin-bottom: 14px; }
+        .player-bar-top { display: flex; align-items: center; padding: 8px 16px; gap: 12px; }
         .player-bar-label { flex: 1; font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 2px; color: #44445a; }
         .player-bar-status { font-size: 12px; color: var(--mut); }
-        .music-btn { background: var(--s3); border: 1px solid #333340; border-radius: 50%; width: 36px; height: 36px; color: #fff; cursor: pointer; font-size: 15px; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-        .music-btn:active { transform: scale(0.92); }
-        .music-btn.playing { background: var(--p2); color: #000; border-color: var(--p2); }
-        .music-btn:disabled { background: #1a1a24; color: #333; border-color: #222; cursor: default; }
+        .player-bar .spotify-embed-wrap { width: 100%; height: 80px; overflow: hidden; position: relative; }
+        .player-bar .spotify-embed-wrap iframe { border-radius: 0 !important; width: 100%; height: 80px; border: none; }
+        /* Hide song title, artist, thumbnail — only show transport controls */
+        .player-bar .spotify-embed-wrap::after { content: ''; position: absolute; top: 0; left: 0; right: 80px; bottom: 0; background: var(--sur); z-index: 1; pointer-events: none; }
 
         .tl-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
         .tl-scroll::-webkit-scrollbar { display: none; }
@@ -224,14 +225,15 @@
         </div>
     </div>
 
-    <!-- Custom music player -->
+    <!-- Music player with visible Spotify embed (needed for full songs on mobile) -->
     <div class="player-bar">
-        <div style="flex:1">
-            <div class="player-bar-label">🎵 RAAD HET JAAR</div>
-            <div class="player-bar-status" id="player-status">Laden...</div>
+        <div class="player-bar-top">
+            <div style="flex:1">
+                <div class="player-bar-label">🎵 RAAD HET JAAR</div>
+                <div class="player-bar-status" id="player-status">Laden...</div>
+            </div>
         </div>
-        <button id="btn-toggle-play" class="music-btn" onclick="toggleMusicPlay()" disabled>▶</button>
-        <button id="btn-replay" class="music-btn" onclick="replayMusic()" disabled title="Opnieuw">↺</button>
+        <div class="spotify-embed-wrap" id="spotify-embed-div"></div>
     </div>
 
     <div class="tl-scroll">
@@ -288,8 +290,6 @@
     <p>Nummer zoeken op Spotify…</p>
 </div>
 
-<!-- Spotify embed container (clipped so mobile treats it as visible for full playback) -->
-<div id="spotify-embed-div" style="position:fixed;bottom:0;left:0;width:300px;height:80px;clip:rect(0,0,0,0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;"></div>
 
 <script>
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
@@ -323,7 +323,7 @@ const DATASETS = {
 // === SPOTIFY EMBED CONTROLLER SETUP ===
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
     const element = document.getElementById('spotify-embed-div');
-    IFrameAPI.createController(element, { width: 300, height: 80 }, (controller) => {
+    IFrameAPI.createController(element, { width: '100%', height: 80 }, (controller) => {
         embedController = controller;
         controller.addListener('playback_update', (e) => {
             isMusicPlaying = !e.data.isPaused;
@@ -350,15 +350,6 @@ function loadAndPlayTrack(trackId) {
     }, 900);
 }
 
-function toggleMusicPlay() {
-    if (embedController) embedController.togglePlay();
-}
-
-function replayMusic() {
-    if (!embedController) return;
-    embedController.seek(0);
-    setTimeout(() => { if (embedController) embedController.play(); }, 300);
-}
 
 function setPlayerStatus(text) {
     const el = document.getElementById('player-status');
@@ -366,21 +357,13 @@ function setPlayerStatus(text) {
 }
 
 function updateMusicUI() {
-    const btn = document.getElementById('btn-toggle-play');
-    if (btn) {
-        btn.textContent = isMusicPlaying ? '⏸' : '▶';
-        btn.classList.toggle('playing', isMusicPlaying);
-    }
     if (currentTrackId) {
         setPlayerStatus(isMusicPlaying ? 'Aan het spelen...' : 'Gepauzeerd');
     }
 }
 
 function setMusicControlsEnabled(enabled) {
-    const btn1 = document.getElementById('btn-toggle-play');
-    const btn2 = document.getElementById('btn-replay');
-    if (btn1) btn1.disabled = !enabled;
-    if (btn2) btn2.disabled = !enabled;
+    // Controls are now handled by the Spotify embed itself
 }
 
 // === CHALLENGE HELPERS ===
@@ -532,8 +515,6 @@ async function nextRound() {
     isMusicPlaying = false;
     setPlayerStatus('Zoeken...');
     setMusicControlsEnabled(false);
-    const playBtn = document.getElementById('btn-toggle-play');
-    if (playBtn) { playBtn.textContent = '▶'; playBtn.classList.remove('playing'); }
 
     updateHeader();
     document.getElementById('action-panel').style.display = 'none';

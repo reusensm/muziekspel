@@ -4,7 +4,8 @@
       "Bash(python -c:*)",
       "Bash(pip show:*)",
       "Bash(findstr:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:joe.be)"
     ]
   }
 }
