@@ -288,8 +288,8 @@
     <p>Nummer zoeken op Spotify…</p>
 </div>
 
-<!-- Hidden Spotify embed container (audio plays here, visually hidden) -->
-<div id="spotify-embed-div" style="position:fixed;bottom:0;left:0;width:300px;height:80px;opacity:0;pointer-events:none;z-index:-1;"></div>
+<!-- Spotify embed container (clipped so mobile treats it as visible for full playback) -->
+<div id="spotify-embed-div" style="position:fixed;bottom:0;left:0;width:300px;height:80px;clip:rect(0,0,0,0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;"></div>
 
 <script>
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
