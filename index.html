@@ -198,7 +198,7 @@
                 font-family:'DM Sans';
             ">
                 <option value="default">Standaard collectie</option>
-                <option value="mnm2025">MNM top 2025 ALL TIME</option>
+                <option value="hitster">JOE TOP 2000 of 2025</option>
             </select>
         </div>
 
@@ -294,7 +294,7 @@
     <p>Nummer zoeken op Spotify…</p>
 </div>
 
-
+https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/hitster_songs.json
 <script>
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
@@ -321,7 +321,7 @@ let pendingTrackId = null;
 let selectedDataset = 'default';
 const DATASETS = {
     default: 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json',
-    mnm2025: 'https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/mnm_top_2025_full.json'
+    hitster: 'https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/hitster_songs.json'
 };
 
 // === SPOTIFY EMBED CONTROLLER SETUP ===
@@ -452,7 +452,8 @@ async function init() {
 
 async function loadSongs() {
     const url = DATASETS[selectedDataset];
-    const name = selectedDataset === 'mnm2025' ? 'MNM top 2025 ALL TIME' : 'standaard';
+    const names = { default: 'standaard', hitster: 'JOE TOP 2000 of 2025' };
+    const name = names[selectedDataset] || selectedDataset;
     try {
         const res = await fetch(url);
         if (!res.ok) throw new Error('Fetch mislukt: ' + res.status);
