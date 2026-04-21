@@ -118,29 +118,29 @@
         /* Result modal — full-screen impact */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: flex-end; justify-content: center; z-index: 200; }
         .modal.open { display: flex; }
-        .modal-card { background: var(--sur); border-radius: 28px 28px 0 0; padding: 32px 24px max(env(safe-area-inset-bottom, 24px), 24px); text-align: center; width: 100%; border: 1px solid #2a2a38; border-bottom: none; animation: slideUp 0.3s cubic-bezier(0.34,1.4,0.64,1); }
+        .modal-card { background: var(--sur); border-radius: 28px 28px 0 0; padding: 28px 20px max(env(safe-area-inset-bottom, 20px), 20px); text-align: center; width: 100%; border: 1px solid #2a2a38; border-bottom: none; animation: slideUp 0.3s cubic-bezier(0.34,1.4,0.64,1); max-height: 92dvh; overflow-y: auto; }
         @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .result-badge { display: block; font-family: 'Bebas Neue'; font-size: 28px; letter-spacing: 3px; margin-bottom: 4px; }
+        .result-badge { display: block; font-family: 'Bebas Neue'; font-size: 28px; letter-spacing: 3px; margin-bottom: 2px; }
         .result-badge.correct { color: #34c759; }
         .result-badge.stolen { color: #ff9500; }
         .result-badge.wrong { color: var(--p1); }
-        .result-year { font-family: 'Bebas Neue'; font-size: 96px; line-height: 1; color: var(--gold); margin-bottom: 4px; }
-        .result-song { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-        .result-artist { font-size: 16px; color: var(--mut); margin-bottom: 16px; }
-        .result-details { background: #0d0d14; border-radius: 14px; padding: 4px 16px; margin-bottom: 16px; text-align: left; }
-        .result-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: 17px; }
+        .result-year { font-family: 'Bebas Neue'; font-size: clamp(64px, 20vw, 96px); line-height: 1; color: var(--gold); margin-bottom: 2px; }
+        .result-song { font-size: clamp(16px, 4.5vw, 22px); font-weight: 700; margin-bottom: 2px; }
+        .result-artist { font-size: clamp(13px, 3.5vw, 16px); color: var(--mut); margin-bottom: 12px; }
+        .result-details { background: #0d0d14; border-radius: 14px; padding: 2px 14px; margin-bottom: 12px; text-align: left; }
+        .result-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; font-size: 16px; }
         .result-row + .result-row { border-top: 1px solid #1a1a24; }
         .result-row .rr-icon { font-size: 20px; flex-shrink: 0; }
-        .result-row .rr-label { color: var(--mut); flex: 1; font-size: 15px; }
+        .result-row .rr-label { color: var(--mut); flex: 1; font-size: 14px; }
         .result-row .rr-val { font-family: 'Bebas Neue'; font-size: 20px; }
         .rr-val.ok { color: #34c759; }
         .rr-val.fail { color: var(--p1); }
         .rr-val.na { color: #444; }
-        .result-bonus { font-family: 'Bebas Neue'; font-size: 20px; color: var(--gold); min-height: 20px; margin-bottom: 16px; }
-        /* Title confirm section */
-        .title-confirm-box { background: #0d0d18; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
-        .title-confirm-q { font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 1px; color: var(--gold); margin-bottom: 6px; }
-        .title-confirm-sub { font-size: 14px; color: var(--mut); margin-bottom: 14px; }
+        .result-bonus { font-family: 'Bebas Neue'; font-size: 20px; color: var(--gold); min-height: 20px; margin-bottom: 12px; }
+        /* Title confirm */
+        .title-confirm-box { background: #0d0d18; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+        .title-confirm-q { font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 1px; color: var(--gold); margin-bottom: 4px; }
+        .title-confirm-sub { font-size: 13px; color: var(--mut); margin-bottom: 12px; }
         .title-confirm-btns { display: flex; gap: 10px; }
         .btn-correct { flex: 1; background: linear-gradient(135deg, #34c759, #00c8f8); color: #fff; font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 1px; padding: 18px; border: none; border-radius: 14px; cursor: pointer; }
         .btn-wrong-guess { flex: 1; background: #1a1a24; color: #555; font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 1px; padding: 18px; border: none; border-radius: 14px; cursor: pointer; }
@@ -749,13 +749,8 @@ function resolveRound(stealAttempted, stealPos) {
     document.getElementById('rm-details').innerHTML = activeRow + stealRow;
     document.getElementById('rm-bonus').textContent = '';
 
-    if (originalCorrect) {
-        document.getElementById('rm-title-confirm').style.display = 'block';
-        document.getElementById('rm-next-btn').style.display = 'none';
-    } else {
-        document.getElementById('rm-title-confirm').style.display = 'none';
-        document.getElementById('rm-next-btn').style.display = 'block';
-    }
+    document.getElementById('rm-title-confirm').style.display = 'block';
+    document.getElementById('rm-next-btn').style.display = 'none';
 
     document.getElementById('result-modal').classList.add('open');
     updateHeader();
