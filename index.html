@@ -794,6 +794,7 @@ function restartGame() {
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    document.querySelector('.danceparty-btn').style.display = id === 'gs' ? 'none' : '';
 }
 
 // Danceparty
