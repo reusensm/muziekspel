@@ -787,12 +787,9 @@ function resolveRound(stealAttempted, stealPos) {
     // Stealer picks an alternative position in the GUESSER's (curP's) timeline
     const stealCorrect    = stealAttempted && stealPos !== null && isCorrectPlacement(curP.timeline, stealPos, year);
 
-    let resultType, badge;
-
-    // Pause music during result
     if (spotifyPlayer) spotifyPlayer.pause();
-    playSound(resultType);
 
+    let resultType, badge;
     if (originalCorrect) {
         curP.score++;
         curP.timeline.push(currentSong);
@@ -807,6 +804,7 @@ function resolveRound(stealAttempted, stealPos) {
         resultType = 'wrong';
         badge = '✗ FOUT!';
     }
+    playSound(resultType);
 
     const activeRow = `
         <div class="result-row">
