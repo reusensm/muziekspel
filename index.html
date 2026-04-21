@@ -55,17 +55,22 @@
         .cp-row { display: flex; gap: 5px; justify-content: center; margin-top: 4px; }
         .cp-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); }
         .cp-dot.empty { background: transparent; border: 1px solid #3a3a4a; }
+        .score-prog-bar { height: 4px; border-radius: 3px; background: #1e1e28; margin-top: 6px; overflow: hidden; }
+        .score-prog-fill { height: 100%; border-radius: 3px; background: var(--active-color, var(--gold)); transition: width 0.5s ease; }
+        .score-prog-label { font-family: 'Bebas Neue'; font-size: 11px; color: var(--mut); margin-top: 2px; }
         .turn-pill { background: var(--s2); border-radius: 14px; padding: 8px 12px; text-align: center; border: 1px solid #252532; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .turn-label { font-size: 9px; color: var(--mut); letter-spacing: 1px; text-transform: uppercase; }
         .turn-name { font-family: 'Bebas Neue'; font-size: 15px; white-space: nowrap; }
 
         /* Music player bar */
-        .player-bar { border-radius: 14px; background: var(--sur); border: 1px solid #1a1a24; flex-shrink: 0; margin-bottom: 10px; padding: 10px 14px 10px 16px; display: flex; align-items: center; gap: 14px; }
+        .player-bar { border-radius: 14px; background: var(--sur); border: 1px solid #1a1a24; flex-shrink: 0; margin-bottom: 10px; padding: 10px 14px 10px 16px; display: flex; align-items: center; gap: 10px; }
         .player-bar-label { font-family: 'Bebas Neue'; font-size: 10px; letter-spacing: 2px; color: #44445a; }
         .player-bar-status { font-size: 14px; color: var(--txt); margin-top: 2px; font-weight: 500; }
         .btn-playpause { width: 54px; height: 54px; border-radius: 50%; background: #1DB954; border: none; color: #000; font-size: 24px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: box-shadow 0.3s; }
         .btn-playpause.playing { animation: musicPulse 2s ease-in-out infinite; }
         .btn-playpause:disabled { background: var(--gray); color: var(--mut); cursor: not-allowed; animation: none; }
+        .btn-skip { height: 54px; padding: 0 14px; border-radius: 12px; background: #1a1a24; border: none; color: var(--mut); font-family: 'Bebas Neue'; font-size: 16px; letter-spacing: 1px; cursor: pointer; flex-shrink: 0; transition: color 0.15s, background 0.15s; }
+        .btn-skip:active { background: #252532; color: var(--txt); }
         @keyframes musicPulse { 0%,100% { box-shadow: 0 0 0 4px rgba(29,185,84,0.2); } 50% { box-shadow: 0 0 0 12px rgba(29,185,84,0); } }
 
         /* Timeline */
@@ -73,8 +78,10 @@
         .tl-scroll::-webkit-scrollbar { display: none; }
 
         /* Slot buttons — large tap targets, readable from table */
-        .tins { padding: 15px 16px; border: 2px dashed #2a2a38; border-radius: 12px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; font-size: 17px; letter-spacing: 1px; cursor: pointer; margin: 4px 0; transition: all 0.1s; background: transparent; display: flex; align-items: center; justify-content: center; min-height: 56px; }
+        .tins { padding: 15px 16px; border: 2px dashed #2a2a38; border-radius: 12px; text-align: center; color: var(--gold); font-family: 'Bebas Neue'; font-size: 17px; letter-spacing: 1px; cursor: pointer; margin: 4px 0; transition: background 0.1s, border-color 0.1s, transform 0.1s; background: transparent; display: flex; align-items: center; justify-content: center; min-height: 56px; }
         .tins:active { background: rgba(255,201,64,0.12); border-color: var(--gold); transform: scale(0.98); }
+        @keyframes tinFlash { 0% { background: rgba(255,201,64,0.35); border-color: var(--gold); transform: scale(0.96); } 100% { background: transparent; transform: scale(1); } }
+        .tins.tapped { animation: tinFlash 0.25s ease-out forwards; pointer-events: none; }
         .tins.locked { opacity: 0.25; cursor: default; pointer-events: none; min-height: 32px; padding: 6px 16px; font-size: 12px; }
         .tins.blocked { opacity: 0.4; cursor: not-allowed; pointer-events: none; border-color: var(--p1); color: var(--p1); background: rgba(255,45,85,0.05); }
         .tins.blocked::after { content: ' 🚫'; }
@@ -225,6 +232,8 @@
             <div class="score-name" id="hp1n">P1</div>
             <div class="score-num" style="color:var(--p1)" id="hp1s">0</div>
             <div class="cp-row" id="cp1-dots"></div>
+            <div class="score-prog-bar"><div class="score-prog-fill" id="prog1" style="width:0%"></div></div>
+            <div class="score-prog-label" id="prog1-label">0/10</div>
         </div>
         <div class="turn-pill">
             <div class="turn-label">Beurt</div>
@@ -234,6 +243,8 @@
             <div class="score-name" id="hp2n">P2</div>
             <div class="score-num" style="color:var(--p2)" id="hp2s">0</div>
             <div class="cp-row" id="cp2-dots"></div>
+            <div class="score-prog-bar"><div class="score-prog-fill" id="prog2" style="width:0%"></div></div>
+            <div class="score-prog-label" id="prog2-label">0/10</div>
         </div>
     </div>
 
@@ -244,6 +255,7 @@
             <div class="player-bar-status" id="player-status">Laden...</div>
         </div>
         <button class="btn-playpause" id="btn-playpause" onclick="togglePlayPause()" disabled>▶</button>
+        <button class="btn-skip" onclick="skipSong()">SKIP ↩</button>
     </div>
 
     <div class="tl-scroll">
@@ -384,6 +396,56 @@ function loadAndPlayTrack(trackId) {
 
 function togglePlayPause() {
     if (spotifyPlayer) spotifyPlayer.togglePlay();
+}
+
+// === SOUND EFFECTS ===
+let audioCtx = null;
+function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+}
+function playSound(type) {
+    try {
+        const ctx = getAudioCtx();
+        const t = ctx.currentTime;
+        const notes = type === 'correct'  ? [[523,0],[659,0.12],[784,0.24]] :
+                      type === 'stolen'   ? [[330,0],[440,0.09],[554,0.18]] :
+                                           [[220,0],[165,0.15]];
+        const wave  = type === 'wrong' ? 'sawtooth' : 'sine';
+        notes.forEach(([freq, delay]) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = wave; osc.frequency.value = freq;
+            const s = t + delay;
+            gain.gain.setValueAtTime(0, s);
+            gain.gain.linearRampToValueAtTime(type === 'wrong' ? 0.12 : 0.22, s + 0.04);
+            gain.gain.linearRampToValueAtTime(0, s + (type === 'wrong' ? 0.3 : 0.22));
+            if (type === 'wrong') osc.frequency.linearRampToValueAtTime(80, s + 0.3);
+            osc.start(s); osc.stop(s + 0.5);
+        });
+    } catch(e) {}
+}
+
+// === SKIP ===
+async function skipSong() {
+    if (!RAW_SONGS.length) RAW_SONGS = [...ALL_SONGS];
+    currentSong = RAW_SONGS.splice(Math.floor(Math.random() * RAW_SONGS.length), 1)[0];
+    currentTrackId = null;
+    setPlayerStatus('Zoeken...');
+    const ppBtn = document.getElementById('btn-playpause');
+    if (ppBtn) { ppBtn.textContent = '▶'; ppBtn.classList.remove('playing'); ppBtn.disabled = true; }
+    document.getElementById('searching').classList.add('open');
+    const result = await findSpotifyTrack(currentSong);
+    document.getElementById('searching').classList.remove('open');
+    if (result) {
+        setMusicControlsEnabled(true);
+        loadAndPlayTrack(result.id);
+    } else {
+        setPlayerStatus('Nummer niet gevonden');
+    }
+    showPlacePhase();
 }
 
 function setPlayerStatus(text) {
@@ -581,6 +643,11 @@ function updateHeader() {
     renderCpDots('cp2-dots', p2.cp);
     document.getElementById('pill1').classList.toggle('active', turn === 1);
     document.getElementById('pill2').classList.toggle('active', turn === 2);
+    const p1cards = p1.timeline.length, p2cards = p2.timeline.length;
+    document.getElementById('prog1').style.width = (p1cards / WIN_CARDS * 100) + '%';
+    document.getElementById('prog2').style.width = (p2cards / WIN_CARDS * 100) + '%';
+    document.getElementById('prog1-label').textContent = p1cards + '/' + WIN_CARDS;
+    document.getElementById('prog2-label').textContent = p2cards + '/' + WIN_CARDS;
 }
 
 function renderCpDots(elId, cp) {
@@ -617,7 +684,7 @@ function renderTimeline() {
             return `<div class="tins guessed">📍 ${label}</div>`;
         }
         if (!clickable) return `<div class="tins locked">${label}</div>`;
-        return `<div class="tins" onclick="handlePick(${pos})">${label}</div>`;
+        return `<div class="tins" onclick="handlePick(${pos}, this)">${label}</div>`;
     };
 
     let h = slot(0, `⬇️ VOOR ${sorted[0][2]}`);
@@ -634,14 +701,17 @@ function renderTimeline() {
     tl.innerHTML = h;
 }
 
-function handlePick(pos) {
-    if (phase === 'place') {
-        pGuess = pos;
-        blockedStealPositions = computeBlockedStealPositions(pGuess);
-        showStealPhase();
-    } else if (phase === 'steal-place') {
-        resolveRound(true, pos);
-    }
+function handlePick(pos, el) {
+    if (el) el.classList.add('tapped');
+    setTimeout(() => {
+        if (phase === 'place') {
+            pGuess = pos;
+            blockedStealPositions = computeBlockedStealPositions(pGuess);
+            showStealPhase();
+        } else if (phase === 'steal-place') {
+            resolveRound(true, pos);
+        }
+    }, 180);
 }
 
 function showStealPhase() {
@@ -707,6 +777,7 @@ function resolveRound(stealAttempted, stealPos) {
 
     // Pause music during result
     if (spotifyPlayer) spotifyPlayer.pause();
+    playSound(resultType);
 
     if (originalCorrect) {
         curP.score++;
