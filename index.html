@@ -408,23 +408,43 @@ function getAudioCtx() {
 function playSound(type) {
     try {
         const ctx = getAudioCtx();
-        const t = ctx.currentTime;
-        const notes = type === 'correct'  ? [[523,0],[659,0.12],[784,0.24]] :
-                      type === 'stolen'   ? [[330,0],[440,0.09],[554,0.18]] :
-                                           [[220,0],[165,0.15]];
-        const wave  = type === 'wrong' ? 'sawtooth' : 'sine';
-        notes.forEach(([freq, delay]) => {
+        const now = ctx.currentTime;
+        if (type === 'correct') {
+            [523, 659, 784].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                const s = now + i * 0.13;
+                gain.gain.setValueAtTime(0, s);
+                gain.gain.linearRampToValueAtTime(0.28, s + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, s + 0.4);
+                osc.start(s); osc.stop(s + 0.45);
+            });
+        } else if (type === 'stolen') {
+            [440, 554, 659].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'square';
+                osc.frequency.value = freq;
+                const s = now + i * 0.09;
+                gain.gain.setValueAtTime(0.12, s);
+                gain.gain.exponentialRampToValueAtTime(0.001, s + 0.12);
+                osc.start(s); osc.stop(s + 0.14);
+            });
+        } else {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.connect(gain); gain.connect(ctx.destination);
-            osc.type = wave; osc.frequency.value = freq;
-            const s = t + delay;
-            gain.gain.setValueAtTime(0, s);
-            gain.gain.linearRampToValueAtTime(type === 'wrong' ? 0.12 : 0.22, s + 0.04);
-            gain.gain.linearRampToValueAtTime(0, s + (type === 'wrong' ? 0.3 : 0.22));
-            if (type === 'wrong') osc.frequency.linearRampToValueAtTime(80, s + 0.3);
-            osc.start(s); osc.stop(s + 0.5);
-        });
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.linearRampToValueAtTime(60, now + 0.5);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.linearRampToValueAtTime(0, now + 0.5);
+            osc.start(now); osc.stop(now + 0.5);
+        }
     } catch(e) {}
 }
 
