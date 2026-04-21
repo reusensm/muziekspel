@@ -68,6 +68,11 @@
         .player-bar .spotify-embed-wrap iframe { border-radius: 0 !important; width: 100%; height: 152px; border: none; position: absolute; bottom: 0; left: 0; }
         /* Overlay to hide any song info that peeks through */
         .spotify-info-cover { position: absolute; top: 0; left: 0; right: 80px; bottom: 0; background: var(--sur); z-index: 2; }
+        .mobile-play-wrap { padding: 10px 16px 14px; }
+        .btn-mobile-spotify { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: #1DB954; color: #000; font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 1px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; text-decoration: none; }
+        .btn-mobile-spotify svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .btn-mobile-spotify.loading { background: #333340; color: var(--mut); pointer-events: none; }
+        .mobile-play-hint { text-align: center; font-size: 11px; color: var(--mut); margin-top: 6px; }
 
         .tl-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
         .tl-scroll::-webkit-scrollbar { display: none; }
@@ -226,7 +231,7 @@
         </div>
     </div>
 
-    <!-- Music player with visible Spotify embed (needed for full songs on mobile) -->
+    <!-- Music player -->
     <div class="player-bar">
         <div class="player-bar-top">
             <div style="flex:1">
@@ -234,9 +239,18 @@
                 <div class="player-bar-status" id="player-status">Laden...</div>
             </div>
         </div>
-        <div class="spotify-embed-wrap">
+        <!-- Desktop: Spotify embed -->
+        <div class="spotify-embed-wrap" id="embed-wrap">
             <div id="spotify-embed-div" style="width:100%;height:152px;position:absolute;bottom:0;left:0;"></div>
             <div class="spotify-info-cover"></div>
+        </div>
+        <!-- Mobile: open in Spotify app -->
+        <div class="mobile-play-wrap" id="mobile-play-wrap" style="display:none">
+            <button class="btn-mobile-spotify loading" id="mobile-play-btn" onclick="openInSpotifyApp()">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                LADEN...
+            </button>
+            <p class="mobile-play-hint">Opent het volledige nummer in de Spotify-app</p>
         </div>
     </div>
 
@@ -298,6 +312,8 @@
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 const WIN_CARDS = 10;
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
+    (navigator.maxTouchPoints > 0 && /Macintosh/.test(navigator.userAgent));
 
 let ALL_SONGS = [], RAW_SONGS = [];
 let SP_TOKEN = '';
@@ -315,6 +331,7 @@ let embedController = null;
 let isMusicPlaying = false;
 let currentTrackId = null;
 let pendingTrackId = null;
+let mobileTrackId = null;
 
 // Dataset keuze
 let selectedDataset = 'hitster';
@@ -322,6 +339,12 @@ const DATASETS = {
     default: 'https://raw.githubusercontent.com/reusensm/muziekspel/main/songsdata.json',
     hitster: 'https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/hitster_songs.json'
 };
+
+// Show the right player section based on device
+function initPlayerUI() {
+    document.getElementById('embed-wrap').style.display = isMobile ? 'none' : '';
+    document.getElementById('mobile-play-wrap').style.display = isMobile ? '' : 'none';
+}
 
 // === SPOTIFY EMBED CONTROLLER SETUP ===
 window.onSpotifyIframeApiReady = (IFrameAPI) => {
@@ -341,6 +364,14 @@ window.onSpotifyIframeApiReady = (IFrameAPI) => {
 
 function loadAndPlayTrack(trackId) {
     currentTrackId = trackId;
+    if (isMobile) {
+        mobileTrackId = trackId;
+        const btn = document.getElementById('mobile-play-btn');
+        btn.classList.remove('loading');
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg> SPEEL IN SPOTIFY`;
+        setPlayerStatus('Klaar om te spelen');
+        return;
+    }
     if (!embedController) {
         pendingTrackId = trackId;
         setPlayerStatus('Laden...');
@@ -351,6 +382,21 @@ function loadAndPlayTrack(trackId) {
     setTimeout(() => {
         if (embedController) embedController.play();
     }, 900);
+}
+
+function openInSpotifyApp() {
+    if (!mobileTrackId) return;
+    // Try the Spotify URI scheme first (opens app); fall back to web URL
+    const appLink = 'spotify:track:' + mobileTrackId;
+    const webLink = 'https://open.spotify.com/track/' + mobileTrackId;
+    const start = Date.now();
+    window.location.href = appLink;
+    setTimeout(() => {
+        // If the app didn't open (we're still on the page after ~600ms), fall back to web
+        if (Date.now() - start < 1500) {
+            window.open(webLink, '_blank');
+        }
+    }, 600);
 }
 
 
@@ -516,9 +562,15 @@ async function nextRound() {
 
     // Reset music controls
     currentTrackId = null;
+    mobileTrackId = null;
     isMusicPlaying = false;
     setPlayerStatus('Zoeken...');
     setMusicControlsEnabled(false);
+    if (isMobile) {
+        const btn = document.getElementById('mobile-play-btn');
+        btn.classList.add('loading');
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg> LADEN...`;
+    }
 
     updateHeader();
     document.getElementById('action-panel').style.display = 'none';
@@ -538,6 +590,7 @@ async function nextRound() {
     renderTimeline();
     showPlacePhase();
     showScreen('gs');
+    initPlayerUI();
 }
 
 function updateHeader() {
