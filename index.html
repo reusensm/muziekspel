@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Muziekspel</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,500;0,700;1,300&display=swap" rel="stylesheet">
-    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <style>
         :root {
             --bg: #080810; --sur: #111118; --s2: #18181f; --s3: #222230;
@@ -59,20 +59,11 @@
         .turn-name { font-family: 'Bebas Neue'; font-size: 16px; white-space: nowrap; }
 
         /* Custom music player bar */
-        .player-bar { position: relative; border-radius: 12px; overflow: hidden; background: var(--sur); border: 1px solid #1a1a24; flex-shrink: 0; margin-bottom: 14px; }
-        .player-bar-top { display: flex; align-items: center; padding: 8px 16px; gap: 12px; }
-        .player-bar-label { flex: 1; font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 2px; color: #44445a; }
-        .player-bar-status { font-size: 12px; color: var(--mut); }
-        .player-bar .spotify-embed-wrap { width: 100%; height: 80px; overflow: hidden; position: relative; }
-        /* Embed is 152px (normal size = full playback on mobile), but we only show bottom 80px (controls) */
-        .player-bar .spotify-embed-wrap iframe { border-radius: 0 !important; width: 100%; height: 152px; border: none; position: absolute; bottom: 0; left: 0; }
-        /* Overlay to hide any song info that peeks through */
-        .spotify-info-cover { position: absolute; top: 0; left: 0; right: 80px; bottom: 0; background: var(--sur); z-index: 2; }
-        .mobile-play-wrap { padding: 10px 16px 14px; }
-        .btn-mobile-spotify { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: #1DB954; color: #000; font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 1px; padding: 14px; border-radius: 10px; border: none; cursor: pointer; text-decoration: none; }
-        .btn-mobile-spotify svg { width: 22px; height: 22px; flex-shrink: 0; }
-        .btn-mobile-spotify.loading { background: #333340; color: var(--mut); pointer-events: none; }
-        .mobile-play-hint { text-align: center; font-size: 11px; color: var(--mut); margin-top: 6px; }
+        .player-bar { border-radius: 12px; background: var(--sur); border: 1px solid #1a1a24; flex-shrink: 0; margin-bottom: 14px; padding: 12px 16px; display: flex; align-items: center; gap: 14px; }
+        .player-bar-label { font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 2px; color: #44445a; }
+        .player-bar-status { font-size: 12px; color: var(--mut); margin-top: 2px; }
+        .btn-playpause { width: 48px; height: 48px; border-radius: 50%; background: #1DB954; border: none; color: #000; font-size: 20px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+        .btn-playpause:disabled { background: var(--gray); color: var(--mut); cursor: not-allowed; }
 
         .tl-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 10px; }
         .tl-scroll::-webkit-scrollbar { display: none; }
@@ -233,25 +224,11 @@
 
     <!-- Music player -->
     <div class="player-bar">
-        <div class="player-bar-top">
-            <div style="flex:1">
-                <div class="player-bar-label">🎵 RAAD HET JAAR</div>
-                <div class="player-bar-status" id="player-status">Laden...</div>
-            </div>
+        <div style="flex:1">
+            <div class="player-bar-label">🎵 RAAD HET JAAR</div>
+            <div class="player-bar-status" id="player-status">Laden...</div>
         </div>
-        <!-- Desktop: Spotify embed -->
-        <div class="spotify-embed-wrap" id="embed-wrap">
-            <div id="spotify-embed-div" style="width:100%;height:152px;position:absolute;bottom:0;left:0;"></div>
-            <div class="spotify-info-cover"></div>
-        </div>
-        <!-- Mobile: open in Spotify app -->
-        <div class="mobile-play-wrap" id="mobile-play-wrap" style="display:none">
-            <button class="btn-mobile-spotify loading" id="mobile-play-btn" onclick="openInSpotifyApp()">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-                LADEN...
-            </button>
-            <p class="mobile-play-hint">Opent het volledige nummer in de Spotify-app</p>
-        </div>
+        <button class="btn-playpause" id="btn-playpause" onclick="togglePlayPause()" disabled>▶</button>
     </div>
 
     <div class="tl-scroll">
@@ -312,8 +289,6 @@
 const CLIENT_ID = '67388d83797b47cfb921f05009b74c9d';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 const WIN_CARDS = 10;
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ||
-    (navigator.maxTouchPoints > 0 && /Macintosh/.test(navigator.userAgent));
 
 let ALL_SONGS = [], RAW_SONGS = [];
 let SP_TOKEN = '';
@@ -326,12 +301,12 @@ let stealerPlayer = null;
 let phase = 'title';
 let blockedStealPositions = [];
 
-// Spotify Embed Controller
-let embedController = null;
+// Spotify Web Playback SDK
+let spotifyPlayer = null;
+let deviceId = null;
+let pendingTrackId = null;
 let isMusicPlaying = false;
 let currentTrackId = null;
-let pendingTrackId = null;
-let mobileTrackId = null;
 
 // Dataset keuze
 let selectedDataset = 'hitster';
@@ -340,79 +315,67 @@ const DATASETS = {
     hitster: 'https://raw.githubusercontent.com/reusensm/muziekspel/refs/heads/main/hitster_songs.json'
 };
 
-// Show the right player section based on device
-function initPlayerUI() {
-    document.getElementById('embed-wrap').style.display = isMobile ? 'none' : '';
-    document.getElementById('mobile-play-wrap').style.display = isMobile ? '' : 'none';
-}
+// === SPOTIFY WEB PLAYBACK SDK ===
+window.onSpotifyWebPlaybackSDKReady = () => {
+    spotifyPlayer = new Spotify.Player({
+        name: 'Muziekspel',
+        getOAuthToken: cb => cb(SP_TOKEN),
+        volume: 0.8
+    });
 
-// === SPOTIFY EMBED CONTROLLER SETUP ===
-window.onSpotifyIframeApiReady = (IFrameAPI) => {
-    const element = document.getElementById('spotify-embed-div');
-    IFrameAPI.createController(element, { width: '100%', height: 152 }, (controller) => {
-        embedController = controller;
-        controller.addListener('playback_update', (e) => {
-            isMusicPlaying = !e.data.isPaused;
-            updateMusicUI();
-        });
+    spotifyPlayer.addListener('ready', ({ device_id }) => {
+        deviceId = device_id;
         if (pendingTrackId) {
-            loadAndPlayTrack(pendingTrackId);
+            playTrackOnDevice(pendingTrackId);
             pendingTrackId = null;
         }
     });
+
+    spotifyPlayer.addListener('player_state_changed', state => {
+        if (!state) return;
+        isMusicPlaying = !state.paused;
+        const btn = document.getElementById('btn-playpause');
+        if (btn) btn.textContent = isMusicPlaying ? '⏸' : '▶';
+        setPlayerStatus(isMusicPlaying ? 'Aan het spelen...' : 'Gepauzeerd');
+    });
+
+    spotifyPlayer.addListener('not_ready', () => { deviceId = null; });
+    spotifyPlayer.connect();
 };
+
+async function playTrackOnDevice(trackId) {
+    await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${SP_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uris: [`spotify:track:${trackId}`] })
+    });
+}
 
 function loadAndPlayTrack(trackId) {
     currentTrackId = trackId;
-    if (isMobile) {
-        mobileTrackId = trackId;
-        const btn = document.getElementById('mobile-play-btn');
-        btn.classList.remove('loading');
-        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg> SPEEL IN SPOTIFY`;
-        setPlayerStatus('Klaar om te spelen');
-        return;
-    }
-    if (!embedController) {
+    const btn = document.getElementById('btn-playpause');
+    if (btn) { btn.disabled = false; btn.textContent = '⏸'; }
+    if (!deviceId) {
         pendingTrackId = trackId;
-        setPlayerStatus('Laden...');
+        setPlayerStatus('Speler verbinden...');
         return;
     }
     setPlayerStatus('Laden...');
-    embedController.loadUri('spotify:track:' + trackId);
-    setTimeout(() => {
-        if (embedController) embedController.play();
-    }, 900);
+    playTrackOnDevice(trackId);
 }
 
-function openInSpotifyApp() {
-    if (!mobileTrackId) return;
-    // Try the Spotify URI scheme first (opens app); fall back to web URL
-    const appLink = 'spotify:track:' + mobileTrackId;
-    const webLink = 'https://open.spotify.com/track/' + mobileTrackId;
-    const start = Date.now();
-    window.location.href = appLink;
-    setTimeout(() => {
-        // If the app didn't open (we're still on the page after ~600ms), fall back to web
-        if (Date.now() - start < 1500) {
-            window.open(webLink, '_blank');
-        }
-    }, 600);
+function togglePlayPause() {
+    if (spotifyPlayer) spotifyPlayer.togglePlay();
 }
-
 
 function setPlayerStatus(text) {
     const el = document.getElementById('player-status');
     if (el) el.textContent = text;
 }
 
-function updateMusicUI() {
-    if (currentTrackId) {
-        setPlayerStatus(isMusicPlaying ? 'Aan het spelen...' : 'Gepauzeerd');
-    }
-}
-
 function setMusicControlsEnabled(enabled) {
-    // Controls are now handled by the Spotify embed itself
+    const btn = document.getElementById('btn-playpause');
+    if (btn) btn.disabled = !enabled;
 }
 
 // === CHALLENGE HELPERS ===
@@ -454,7 +417,7 @@ async function loginWithSpotify() {
     sessionStorage.setItem('pkce_verifier', verifier);
     const params = new URLSearchParams({
         client_id: CLIENT_ID, response_type: 'code', redirect_uri: REDIRECT_URI,
-        scope: 'streaming user-read-private user-read-email user-read-playback-state',
+        scope: 'streaming user-read-private user-read-email user-read-playback-state user-modify-playback-state',
         code_challenge_method: 'S256', code_challenge: challenge, show_dialog: 'true'
     });
     window.location.href = 'https://accounts.spotify.com/authorize?' + params.toString();
@@ -466,7 +429,7 @@ async function exchangeCode(code) {
     return (await res.json()).access_token;
 }
 
-// Spotify track zoeken
+// Spotify track zoeken — geeft { id, previewUrl } terug
 async function findSpotifyTrack(song) {
     const q = encodeURIComponent(`${song[1]} ${song[0]}`);
     try {
@@ -475,7 +438,9 @@ async function findSpotifyTrack(song) {
         const items = d.tracks?.items || [];
         const year = song[2];
         const byYear = items.find(t => Math.abs(parseInt(t.album?.release_date?.substring(0, 4)) - year) <= 2);
-        return (byYear || items[0])?.id || null;
+        const track = byYear || items[0];
+        if (!track) return null;
+        return { id: track.id, previewUrl: track.preview_url || null };
     } catch { return null; }
 }
 
@@ -562,35 +527,27 @@ async function nextRound() {
 
     // Reset music controls
     currentTrackId = null;
-    mobileTrackId = null;
     isMusicPlaying = false;
     setPlayerStatus('Zoeken...');
     setMusicControlsEnabled(false);
-    if (isMobile) {
-        const btn = document.getElementById('mobile-play-btn');
-        btn.classList.add('loading');
-        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg> LADEN...`;
-    }
 
     updateHeader();
     document.getElementById('action-panel').style.display = 'none';
 
     document.getElementById('searching').classList.add('open');
-    const tid = await findSpotifyTrack(currentSong);
+    const result = await findSpotifyTrack(currentSong);
     document.getElementById('searching').classList.remove('open');
 
-    if (tid) {
+    if (result) {
         setMusicControlsEnabled(true);
-        loadAndPlayTrack(tid);
+        loadAndPlayTrack(result.id);
     } else {
         setPlayerStatus('Nummer niet gevonden op Spotify');
-        setMusicControlsEnabled(false);
     }
 
     renderTimeline();
     showPlacePhase();
     showScreen('gs');
-    initPlayerUI();
 }
 
 function updateHeader() {
@@ -721,7 +678,7 @@ function resolveRound(stealAttempted, stealPos) {
     let resultType, badge;
 
     // Pause music during result
-    if (embedController) embedController.pause();
+    if (spotifyPlayer) spotifyPlayer.pause();
 
     if (originalCorrect) {
         curP.score++;
@@ -812,7 +769,7 @@ function showWinScreen(winner) {
         </div>
     `;
     document.getElementById('win-modal').classList.add('open');
-    if (embedController) embedController.pause();
+    if (spotifyPlayer) spotifyPlayer.pause();
 }
 
 function restartGame() {
